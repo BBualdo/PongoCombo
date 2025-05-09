@@ -2,8 +2,14 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
+    public static Ball Instance { get; private set; }
+
     [SerializeField] private float moveSpeed = 7f;
     private Vector2 moveDirection;
+
+    private void Awake() {
+        Instance = this;
+    }
 
     private void Start() {
         moveDirection = new Vector2(-1, 0);
