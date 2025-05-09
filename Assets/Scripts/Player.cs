@@ -28,4 +28,9 @@ public class Player : MonoBehaviour {
         float posY = Mathf.Clamp(position.y, -yMoveBound, yMoveBound);
         transform.position = new Vector3(position.x, posY, position.z);
     }
+
+    public float GetHitOffsetNormalized(ContactPoint2D contact) {
+        float offset = contact.point.y - transform.position.y;
+        return offset / (playerHeight / 2);
+    }
 }
