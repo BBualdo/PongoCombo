@@ -1,7 +1,7 @@
-using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
+    [SerializeField] private Transform playerBallHoldPoint;
     [SerializeField] private bool isAIControlled;
     [SerializeField] private float moveSpeed = 5f;
     private float playerHeight;
@@ -27,11 +27,6 @@ public class Player : MonoBehaviour {
         ApplyPlayerMoveBounds();
     }
 
-    public float GetHitOffsetNormalized(ContactPoint2D contact) {
-        float offset = contact.point.y - transform.position.y;
-        return offset / (playerHeight / 2);
-    }
-
     private void HandleMovement() {
         if (Input.GetKey(KeyCode.W)) {
             transform.position += Vector3.up * (moveSpeed * Time.deltaTime);
@@ -42,12 +37,22 @@ public class Player : MonoBehaviour {
 
     private void HandleAIMovement() {
         Vector3 position = transform.position;
-        transform.position = new Vector3(position.x, Ball.Instance.transform.position.y, position.z);
+        transform.position = new Vector3(position.x, GameManager.Instance.GetCurrentBall().transform.position.y, position.z);
     }
 
     private void ApplyPlayerMoveBounds() {
         Vector3 position = transform.position;
         float posY = Mathf.Clamp(position.y, -yMoveBound, yMoveBound);
         transform.position = new Vector3(position.x, posY, position.z);
+    }
+
+    public float GetHitOffsetNormalized(ContactPoint2D contact) {
+        float offset = contact.point.y - transform.position.y;
+        return offset / (playerHeight / 2);
+    }
+
+    public void GiveBall(Ball ball) {
+        ball.StopMoving();
+        ball.transform.position = playerBallHoldPoint.position;
     }
 }

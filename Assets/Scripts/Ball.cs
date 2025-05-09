@@ -2,21 +2,22 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-    public static Ball Instance { get; private set; }
-
     [SerializeField] private float moveSpeed = 7f;
     private Vector2 moveDirection;
 
-    private void Awake() {
-        Instance = this;
-    }
+    private bool isMoving;
 
     private void Start() {
+        isMoving = true;
         moveDirection = new Vector2(-1, 0);
     }
 
     private void Update() {
-        transform.position += (Vector3)moveDirection.normalized * (moveSpeed * Time.deltaTime);
+        if (isMoving) {
+            transform.position += (Vector3)moveDirection.normalized * (moveSpeed * Time.deltaTime);
+        } else {
+            transform.position = GetBallParent().position;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
@@ -34,5 +35,14 @@ public class Ball : MonoBehaviour
         if (Mathf.Abs(moveDirection.x) < minX) {
             moveDirection.x = Mathf.Sign(moveDirection.x) * minX;
         }
+    }
+
+    private Transform GetBallParent() {
+        return transform.parent;
+    }
+
+    public void StopMoving() {
+        moveDirection = Vector2.zero;
+        isMoving = false;
     }
 }
