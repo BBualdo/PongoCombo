@@ -1,6 +1,7 @@
 using UnityEngine;
 
 public class Player : MonoBehaviour {
+    [SerializeField] private Transform playerVisual;
     [SerializeField] private Transform playerBallHoldPoint;
     [SerializeField] private bool isAIControlled;
     [SerializeField] private float moveSpeed = 5f;
@@ -10,7 +11,7 @@ public class Player : MonoBehaviour {
     private float yMoveBound;
 
     private void Awake() {
-        playerHeight = transform.localScale.y;
+        playerHeight = playerVisual.localScale.y;
     }
 
     private void Start() {
@@ -51,8 +52,7 @@ public class Player : MonoBehaviour {
         return offset / (playerHeight / 2);
     }
 
-    public void GiveBall(Ball ball) {
-        ball.StopMoving();
-        ball.transform.position = playerBallHoldPoint.position;
+    public Transform GetPlayerBallHoldPoint() {
+        return playerBallHoldPoint;
     }
 }

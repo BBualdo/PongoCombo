@@ -2,6 +2,13 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Players")]
+    [SerializeField] private Player leftPlayer;
+    [SerializeField] private Player rightPlayer;
+    private Player playerScored;
+    private Player playerLost;
+
+    [Header("Ball")]
     [SerializeField] private Transform ballSpawnPoint;
     [SerializeField] private Ball ballPrefab;
     public static GameManager Instance { get; private set; }
@@ -13,15 +20,30 @@ public class GameManager : MonoBehaviour
     }
 
     private void Start() {
-        Ball newBall = Instantiate(ballPrefab, ballSpawnPoint);
-        RegisterBall(newBall);
+        CreateBall(ballSpawnPoint);
+
+        GoalLine.OnGoalScored += GoalLine_OnGoalScored;
     }
 
-    public void RegisterBall(Ball ball) {
-        currentBall = ball;
+    private void GoalLine_OnGoalScored(object sender, GoalLine.OnGoalScoredEventArgs e) {
+        if (e.goalSide == GoalLine.GoalSide.Left) {
+            playerScored = rightPlayer;
+            playerLost = leftPlayer;
+        } else {
+            playerScored = leftPlayer;
+            playerLost = rightPlayer;
+        }
+
+        CreateBall(playerLost.GetPlayerBallHoldPoint());
+        currentBall.StopMoving();
     }
 
-    public void DestroyCurrentBall() {
+    private void CreateBall(Transform spawnPoint) {
+        DestroyCurrentBall();
+        currentBall = Instantiate(ballPrefab, spawnPoint);
+    }
+
+    private void DestroyCurrentBall() {
         if (currentBall == null) return;
         Destroy(currentBall.gameObject);
     }

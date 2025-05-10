@@ -2,21 +2,17 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 7f;
+    [SerializeField] private float moveSpeed = 10f;
     private Vector2 moveDirection;
-
-    private bool isMoving;
+    private bool canMove = true;
 
     private void Start() {
-        isMoving = true;
         moveDirection = new Vector2(-1, 0);
     }
 
     private void Update() {
-        if (isMoving) {
+        if (canMove) {
             transform.position += (Vector3)moveDirection.normalized * (moveSpeed * Time.deltaTime);
-        } else {
-            transform.position = GetBallParent().position;
         }
     }
 
@@ -37,12 +33,8 @@ public class Ball : MonoBehaviour
         }
     }
 
-    private Transform GetBallParent() {
-        return transform.parent;
-    }
-
     public void StopMoving() {
+        canMove = false;
         moveDirection = Vector2.zero;
-        isMoving = false;
     }
 }
