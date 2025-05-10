@@ -2,16 +2,21 @@ using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
+    private enum PlayerNumber {
+        Player1,
+        Player2
+    }
     public event EventHandler OnDamageTaken;
     
     [SerializeField] private Transform playerVisual;
     [SerializeField] private Transform playerBallHoldPoint;
     [SerializeField] private bool isAIControlled;
     [SerializeField] private float moveSpeed = 12f;
+    [SerializeField] private PlayerNumber playerNumber;
     private float playerHeight;
 
     [Header("Health")] 
-    private float maxHealth = 100f;
+    [SerializeField] private float maxHealth = 100f;
     private float healthLeft;
     
 
@@ -39,9 +44,12 @@ public class Player : MonoBehaviour {
     }
 
     private void HandleMovement() {
-        if (Input.GetKey(KeyCode.W)) {
+        KeyCode up = playerNumber == PlayerNumber.Player1 ? KeyCode.W : KeyCode.UpArrow;
+        KeyCode down = playerNumber == PlayerNumber.Player1 ? KeyCode.S : KeyCode.DownArrow;
+        
+        if (Input.GetKey(up)) {
             transform.position += Vector3.up * (moveSpeed * Time.deltaTime);
-        } else if (Input.GetKey(KeyCode.S)) {
+        } else if (Input.GetKey(down)) {
             transform.position += Vector3.down * (moveSpeed * Time.deltaTime);
         }
     }
@@ -59,6 +67,8 @@ public class Player : MonoBehaviour {
     }
 
     private void ApplyPlayerMoveBounds() {
+        // TODO: Fix issue with player going into wall slightly
+        
         Vector3 position = transform.position;
         float posY = Mathf.Clamp(position.y, -yMoveBound, yMoveBound);
         transform.position = new Vector3(position.x, posY, position.z);
@@ -94,5 +104,13 @@ public class Player : MonoBehaviour {
 
     public float GetHealthPercent() {
         return (healthLeft / maxHealth) * 100;
+    }
+
+    public float GetRemainingHealth() {
+        return healthLeft;
+    }
+
+    public float GetMaxHealth() {
+        return maxHealth;
     }
 }
