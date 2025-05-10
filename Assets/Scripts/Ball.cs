@@ -37,4 +37,10 @@ public class Ball : MonoBehaviour
         canMove = false;
         moveDirection = Vector2.zero;
     }
+
+    public void PerformServe(Vector2 serveDirection) {
+        transform.parent = null;
+        moveDirection = serveDirection;
+        canMove = true;
+    }
 }
