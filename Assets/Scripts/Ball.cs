@@ -1,11 +1,13 @@
+using System;
 using UnityEngine;
 
-public class Ball : MonoBehaviour
-{
+public class Ball : MonoBehaviour {
+    public event EventHandler OnDamageIncreased;
+    
     [SerializeField] private float moveSpeed = 10f;
     private Vector2 moveDirection;
     private bool canMove = true;
-    private float currentDamage;
+    private float currentDamage = 1;
 
     private void Start() {
         moveDirection = new Vector2(-1, 0);
@@ -18,6 +20,11 @@ public class Ball : MonoBehaviour
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
+        if (!canMove) {
+            // The ball can't move, so it's in player's hands - don't apply collision 
+            return;
+        }
+        
         moveDirection = Vector2.Reflect(moveDirection, other.GetContact(0).normal);
         if (other.gameObject.TryGetComponent<Player>(out Player player)) {
             float offset = player.GetHitOffsetNormalized(other.GetContact(0));
@@ -49,6 +56,7 @@ public class Ball : MonoBehaviour
 
     private void IncreaseBallDamage() {
         currentDamage++;
+        OnDamageIncreased?.Invoke(this, EventArgs.Empty);
     }
 
     public float GetBallDamage() {

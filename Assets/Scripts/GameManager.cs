@@ -1,7 +1,10 @@
+using System;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
-{
+public class GameManager : MonoBehaviour {
+    public Action<Ball> OnBallSpawned;
+    public Action OnBallDestroyed;
+    
     [Header("Players")]
     [SerializeField] private Player leftPlayer;
     [SerializeField] private Player rightPlayer;
@@ -35,8 +38,6 @@ public class GameManager : MonoBehaviour
         }
         
         playerLost.TakeDamage(currentBall.GetBallDamage());
-        
-        Debug.Log($"{playerLost.name} Health: {playerLost.GetHealthPercent()}%");
 
         CreateBall(playerLost.GetPlayerBallHoldPoint());
         currentBall.StopMoving();
@@ -45,11 +46,13 @@ public class GameManager : MonoBehaviour
     private void CreateBall(Transform spawnPoint) {
         DestroyCurrentBall();
         currentBall = Instantiate(ballPrefab, spawnPoint);
+        OnBallSpawned?.Invoke(currentBall);
     }
 
     private void DestroyCurrentBall() {
         if (currentBall == null) return;
         Destroy(currentBall.gameObject);
+        OnBallDestroyed?.Invoke();
     }
 
     public Ball GetCurrentBall() {

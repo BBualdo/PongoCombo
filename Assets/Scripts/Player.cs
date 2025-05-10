@@ -1,6 +1,9 @@
+using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
+    public event EventHandler OnDamageTaken;
+    
     [SerializeField] private Transform playerVisual;
     [SerializeField] private Transform playerBallHoldPoint;
     [SerializeField] private bool isAIControlled;
@@ -86,6 +89,7 @@ public class Player : MonoBehaviour {
 
     public void TakeDamage(float damage) {
         healthLeft -= damage;
+        OnDamageTaken?.Invoke(this, EventArgs.Empty);
     }
 
     public float GetHealthPercent() {
