@@ -33,6 +33,10 @@ public class GameManager : MonoBehaviour
             playerScored = leftPlayer;
             playerLost = rightPlayer;
         }
+        
+        playerLost.TakeDamage(currentBall.GetBallDamage());
+        
+        Debug.Log($"{playerLost.name} Health: {playerLost.GetHealthPercent()}%");
 
         CreateBall(playerLost.GetPlayerBallHoldPoint());
         currentBall.StopMoving();

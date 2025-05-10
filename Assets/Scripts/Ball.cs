@@ -5,6 +5,7 @@ public class Ball : MonoBehaviour
     [SerializeField] private float moveSpeed = 10f;
     private Vector2 moveDirection;
     private bool canMove = true;
+    private float currentDamage;
 
     private void Start() {
         moveDirection = new Vector2(-1, 0);
@@ -22,6 +23,8 @@ public class Ball : MonoBehaviour
             float offset = player.GetHitOffsetNormalized(other.GetContact(0));
             moveDirection.y += offset;
             CorrectDirectionX();
+
+            IncreaseBallDamage();
         }
     }
 
@@ -42,5 +45,13 @@ public class Ball : MonoBehaviour
         transform.parent = null;
         moveDirection = serveDirection;
         canMove = true;
+    }
+
+    private void IncreaseBallDamage() {
+        currentDamage++;
+    }
+
+    public float GetBallDamage() {
+        return currentDamage;
     }
 }

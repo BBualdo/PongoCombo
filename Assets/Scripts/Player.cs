@@ -7,11 +7,17 @@ public class Player : MonoBehaviour {
     [SerializeField] private float moveSpeed = 12f;
     private float playerHeight;
 
+    [Header("Health")] 
+    private float maxHealth = 100f;
+    private float healthLeft;
+    
+
     // The yMoveBound is max absolute position value for the player to hit the walls
     private float yMoveBound;
 
     private void Awake() {
         playerHeight = playerVisual.localScale.y;
+        healthLeft = maxHealth;
     }
 
     private void Start() {
@@ -76,5 +82,13 @@ public class Player : MonoBehaviour {
             ball = null;
             return false;
         }
+    }
+
+    public void TakeDamage(float damage) {
+        healthLeft -= damage;
+    }
+
+    public float GetHealthPercent() {
+        return (healthLeft / maxHealth) * 100;
     }
 }
