@@ -1,5 +1,9 @@
 using System;
+using System.Numerics;
 using UnityEngine;
+using Random = UnityEngine.Random;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 public class Player : MonoBehaviour {
     private enum PlayerNumber {
@@ -7,13 +11,19 @@ public class Player : MonoBehaviour {
         Player2
     }
     public event EventHandler OnDamageTaken;
-    
     [SerializeField] private Transform playerVisual;
     [SerializeField] private Transform playerBallHoldPoint;
-    [SerializeField] private bool isAIControlled;
+    
+    [Header("Player Settings")]
     [SerializeField] private float moveSpeed = 12f;
     [SerializeField] private PlayerNumber playerNumber;
     private float playerHeight;
+    
+    [Header("AI")]
+    [SerializeField] private bool isAIControlled;
+    [SerializeField] private float followSpeed = 5f;
+    private float timeToServe = 0f;
+    private float timeToServeMax = 2f;
 
     [Header("Health")] 
     [SerializeField] private float maxHealth = 100f;
@@ -55,15 +65,35 @@ public class Player : MonoBehaviour {
     }
 
     private void HandleServing() {
-        if (TryGetBall(out Ball ball) && Input.GetKeyDown(KeyCode.Space)) {
-            var sign = Mathf.Sign(playerBallHoldPoint.transform.localPosition.x);
-            ball.PerformServe(new Vector2(sign, 0));
+        if (TryGetBall(out Ball ball)) {
+            if (!isAIControlled) {
+                if (Input.GetKeyDown(KeyCode.Space)) {
+                    var sign = Mathf.Sign(playerBallHoldPoint.transform.localPosition.x);
+                    ball.PerformServe(new Vector2(sign, 0));
+                }
+            } else {
+                timeToServe += Time.deltaTime;
+                
+                if (timeToServe >= timeToServeMax) {
+                    timeToServe = 0f;
+                    var sign = Mathf.Sign(playerBallHoldPoint.transform.localPosition.x);
+                    ball.PerformServe(new Vector2(sign, 0));
+                }
+            }
         }
     }
 
     private void HandleAIMovement() {
-        Vector3 position = transform.position;
-        transform.position = new Vector3(position.x, GameManager.Instance.GetCurrentBall().transform.position.y, position.z);
+        Ball ball = GameManager.Instance.GetCurrentBall();
+        float targetY;
+        
+        if (ball != null) {
+            targetY = Mathf.Lerp(transform.position.y, ball.transform.position.y, followSpeed * Time.deltaTime);
+        } else {
+            targetY = Mathf.Lerp(transform.position.y, 0, followSpeed * Time.deltaTime);
+        }
+        
+        transform.position = new Vector2(transform.position.x, targetY);
     }
 
     private void ApplyPlayerMoveBounds() {

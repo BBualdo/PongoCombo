@@ -12,8 +12,7 @@ public class BallDamageUI : MonoBehaviour {
     }
 
     private void GameManager_OnBallDestroyed() {
-        ball.OnDamageIncreased -= Ball_OnDamageIncreased;
-        ball = null;
+        
     }
 
     private void GameManager_OnBallSpawned(Ball ball) {
