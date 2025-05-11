@@ -10,6 +10,11 @@ public class GameOverUI : MonoBehaviour {
     private void Start() {
         GameManager.Instance.OnGameOver += GameManager_OnGameOver;
         Hide();
+        
+        playAgainButton.onClick.AddListener(() => {
+            GameManager.Instance.RestartGame();
+            Hide();
+        });
     }
 
     private void GameManager_OnGameOver(object sender, GameManager.OnGameOverEventArgs e) {

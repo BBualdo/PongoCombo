@@ -11,6 +11,11 @@ public class PlayerHealthBarUI : MonoBehaviour {
     private void Start() {
         UpdateVisual();
         player.OnDamageTaken += Player_OnDamageTaken;
+        GameManager.Instance.OnGameReset += GameManager_OnGameReset;
+    }
+
+    private void GameManager_OnGameReset(object sender, EventArgs e) {
+        UpdateVisual();
     }
 
     private void Player_OnDamageTaken(object sender, EventArgs e) {

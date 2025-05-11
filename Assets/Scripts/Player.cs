@@ -1,7 +1,5 @@
 using System;
-using System.Numerics;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
@@ -43,14 +41,16 @@ public class Player : MonoBehaviour {
     }
 
     private void Update() {
-        if (!isAIControlled) {
-            HandleMovement();
-        } else {
-            HandleAIMovement();
-        }
+        if (GameManager.Instance.GetState() != GameManager.State.GameOver) {
+            if (!isAIControlled) {
+                HandleMovement();
+            } else {
+                HandleAIMovement();
+            }
         
-        ApplyPlayerMoveBounds();
-        HandleServing();
+            ApplyPlayerMoveBounds();
+            HandleServing();
+        }
     }
 
     private void HandleMovement() {
@@ -146,5 +146,10 @@ public class Player : MonoBehaviour {
 
     public bool IsDead() {
         return GetHealthPercent() <= 0;
+    }
+
+    public void Reset() {
+        transform.position = new Vector2(transform.position.x, 0);
+        healthLeft = maxHealth;
     }
 }

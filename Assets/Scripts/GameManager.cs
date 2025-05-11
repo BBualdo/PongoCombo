@@ -2,8 +2,14 @@ using System;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour {
+    public enum State {
+        GamePlaying,
+        GameOver
+    }
+    
     public Action<Ball> OnBallSpawned;
     public Action OnBallDestroyed;
+    public EventHandler OnGameReset;
 
     public EventHandler<OnGameOverEventArgs> OnGameOver;
     public class OnGameOverEventArgs {
@@ -21,6 +27,8 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private Ball ballPrefab;
     public static GameManager Instance { get; private set; }
 
+    private State state;
+
     private Ball currentBall;
 
     private void Awake() {
@@ -28,8 +36,10 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Start() {
+        state = State.GamePlaying;
+        
         CreateBall(ballSpawnPoint);
-
+        
         GoalLine.OnGoalScored += GoalLine_OnGoalScored;
     }
 
@@ -48,6 +58,8 @@ public class GameManager : MonoBehaviour {
             OnGameOver?.Invoke(this, new OnGameOverEventArgs {
                 winner = playerScored
             });
+
+            state = State.GameOver;
 
             return;
         }
@@ -78,5 +90,20 @@ public class GameManager : MonoBehaviour {
         }
 
         return false;
+    }
+
+    public void RestartGame() {
+        leftPlayer.Reset();
+        rightPlayer.Reset();
+        
+        OnGameReset?.Invoke(this, EventArgs.Empty);
+
+        state = State.GamePlaying;
+        
+        CreateBall(ballSpawnPoint);
+    }
+
+    public State GetState() {
+        return state;
     }
 }
