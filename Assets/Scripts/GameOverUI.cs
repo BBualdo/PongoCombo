@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,6 +21,10 @@ public class GameOverUI : MonoBehaviour {
         exitGameButton.onClick.AddListener(() => {
             SceneManager.LoadScene("Scenes/MainMenuScene");
         });
+    }
+
+    private void OnDestroy() {
+        GameManager.Instance.OnGameOver -= GameManager_OnGameOver;
     }
 
     private void GameManager_OnGameOver(object sender, GameManager.OnGameOverEventArgs e) {

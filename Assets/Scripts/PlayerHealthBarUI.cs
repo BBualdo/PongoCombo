@@ -14,6 +14,10 @@ public class PlayerHealthBarUI : MonoBehaviour {
         GameManager.Instance.OnGameReset += GameManager_OnGameReset;
     }
 
+    private void OnDestroy() {
+        GameManager.Instance.OnGameReset -= GameManager_OnGameReset;
+    }
+
     private void GameManager_OnGameReset(object sender, EventArgs e) {
         UpdateVisual();
     }

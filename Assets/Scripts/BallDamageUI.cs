@@ -8,20 +8,31 @@ public class BallDamageUI : MonoBehaviour {
 
     private void Start() {
         GameManager.Instance.OnBallSpawned += GameManager_OnBallSpawned;
-        GameManager.Instance.OnBallDestroyed += GameManager_OnBallDestroyed;
-    }
-
-    private void GameManager_OnBallDestroyed() {
         
+        UpdateVisual();
+        ball = GameManager.Instance.GetCurrentBall();
+        if (ball != null) {
+            GameManager_OnBallSpawned(ball);
+        }
     }
 
-    private void GameManager_OnBallSpawned(Ball ball) {
-        this.ball = ball;
-        damageValueText.text = ball.GetBallDamage().ToString();
+    private void OnDestroy() {
+        GameManager.Instance.OnBallSpawned -= GameManager_OnBallSpawned;
+    }
+
+    private void GameManager_OnBallSpawned(Ball newBall) {
+        ball = newBall;
+        UpdateVisual();
         ball.OnDamageIncreased += Ball_OnDamageIncreased;
     }
 
     private void Ball_OnDamageIncreased(object sender, EventArgs e) {
-        damageValueText.text = ball.GetBallDamage().ToString();
+        UpdateVisual();
+    }
+
+    private void UpdateVisual() {
+        if (ball != null) {
+            damageValueText.text = ball.GetBallDamage().ToString();
+        }
     }
 }

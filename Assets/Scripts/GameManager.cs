@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour {
     }
     
     public Action<Ball> OnBallSpawned;
-    public Action OnBallDestroyed;
     public EventHandler OnGameReset;
 
     public EventHandler<OnGameOverEventArgs> OnGameOver;
@@ -34,7 +33,12 @@ public class GameManager : MonoBehaviour {
     private Ball currentBall;
 
     private void Awake() {
-        Instance = this;
+        if (Instance == null) {
+            Instance = this;
+        }
+        else {
+            Destroy(gameObject);
+        }
 
         gameMode = PlayerPrefs.GetInt(PlayerPrefsHelper.GAME_MODE);
     }
@@ -45,6 +49,10 @@ public class GameManager : MonoBehaviour {
         CreateBall(ballSpawnPoint);
         
         GoalLine.OnGoalScored += GoalLine_OnGoalScored;
+    }
+
+    private void OnDestroy() {
+        GoalLine.OnGoalScored -= GoalLine_OnGoalScored;
     }
 
     private void GoalLine_OnGoalScored(object sender, GoalLine.OnGoalScoredEventArgs e) {
@@ -81,7 +89,6 @@ public class GameManager : MonoBehaviour {
     private void DestroyCurrentBall() {
         if (currentBall == null) return;
         Destroy(currentBall.gameObject);
-        OnBallDestroyed?.Invoke();
     }
 
     public Ball GetCurrentBall() {
