@@ -16,7 +16,10 @@ public class Field : MonoBehaviour {
         bottomWallLine = bottomWall.GetComponent<LineRenderer>();
     }
 
-    public int GetFieldHeight() {
-        return Mathf.Abs((int)(topWallLine.GetPosition(0).y - bottomWallLine.GetPosition(0).y));
+    public float GetFieldHeight() {
+        float topLinePosY = topWallLine.GetPosition(0).y - topWallLine.startWidth / 2;
+        float bottomLinePosY = bottomWallLine.GetPosition(0).y + bottomWallLine.startWidth / 2;
+        
+        return Mathf.Abs(topLinePosY - bottomLinePosY);
     }
 }

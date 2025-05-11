@@ -31,6 +31,7 @@ public class Player : MonoBehaviour {
 
     // The yMoveBound is max absolute position value for the player to hit the walls
     private float yMoveBound;
+    private float yMoveBoundOffset = 0.1f;
 
     private void Awake() {
         playerHeight = playerVisual.localScale.y;
@@ -99,8 +100,6 @@ public class Player : MonoBehaviour {
     }
 
     private void ApplyPlayerMoveBounds() {
-        // TODO: Fix issue with player going into wall slightly
-        
         Vector3 position = transform.position;
         float posY = Mathf.Clamp(position.y, -yMoveBound, yMoveBound);
         transform.position = new Vector3(position.x, posY, position.z);
