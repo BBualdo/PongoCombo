@@ -4,6 +4,11 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
     public Action<Ball> OnBallSpawned;
     public Action OnBallDestroyed;
+
+    public EventHandler<OnGameOverEventArgs> OnGameOver;
+    public class OnGameOverEventArgs {
+        public Player winner;
+    }
     
     [Header("Players")]
     [SerializeField] private Player leftPlayer;
@@ -39,6 +44,14 @@ public class GameManager : MonoBehaviour {
         
         playerLost.TakeDamage(currentBall.GetBallDamage());
 
+        if (IsGameOver()) {
+            OnGameOver?.Invoke(this, new OnGameOverEventArgs {
+                winner = playerScored
+            });
+
+            return;
+        }
+
         CreateBall(playerLost.GetPlayerBallHoldPoint());
         currentBall.StopMoving();
     }
@@ -57,5 +70,13 @@ public class GameManager : MonoBehaviour {
 
     public Ball GetCurrentBall() {
         return currentBall;
+    }
+
+    private bool IsGameOver() {
+        if (playerLost != null) {
+            return playerLost.IsDead();
+        }
+
+        return false;
     }
 }

@@ -143,4 +143,8 @@ public class Player : MonoBehaviour {
     public float GetMaxHealth() {
         return maxHealth;
     }
+
+    public bool IsDead() {
+        return GetHealthPercent() <= 0;
+    }
 }
