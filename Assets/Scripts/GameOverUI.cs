@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameOverUI : MonoBehaviour {
@@ -15,11 +16,15 @@ public class GameOverUI : MonoBehaviour {
             GameManager.Instance.RestartGame();
             Hide();
         });
+        
+        exitGameButton.onClick.AddListener(() => {
+            SceneManager.LoadScene("Scenes/MainMenuScene");
+        });
     }
 
     private void GameManager_OnGameOver(object sender, GameManager.OnGameOverEventArgs e) {
         Show();
-        playerWinnerText.text = $"{e.winner.name} wygrywa";
+        playerWinnerText.text = $"{e.winner.playerName} wygrywa";
     }
 
     private void Show() {

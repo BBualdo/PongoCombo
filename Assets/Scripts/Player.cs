@@ -11,8 +11,9 @@ public class Player : MonoBehaviour {
     public event EventHandler OnDamageTaken;
     [SerializeField] private Transform playerVisual;
     [SerializeField] private Transform playerBallHoldPoint;
-    
-    [Header("Player Settings")]
+
+    [Header("Player Settings")] 
+    public string playerName;
     [SerializeField] private float moveSpeed = 12f;
     [SerializeField] private PlayerNumber playerNumber;
     private float playerHeight;
@@ -38,6 +39,7 @@ public class Player : MonoBehaviour {
 
     private void Start() {
         yMoveBound = (Field.Instance.GetFieldHeight() - playerHeight) / 2;
+        isAIControlled = playerNumber == PlayerNumber.Player2 && GameManager.Instance.GetGameMode() == 1;
     }
 
     private void Update() {

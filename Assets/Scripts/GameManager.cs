@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour {
+    private int gameMode;
+    
     public enum State {
         GamePlaying,
         GameOver
@@ -33,6 +35,8 @@ public class GameManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
+
+        gameMode = PlayerPrefs.GetInt(PlayerPrefsHelper.GAME_MODE);
     }
 
     private void Start() {
@@ -105,5 +109,9 @@ public class GameManager : MonoBehaviour {
 
     public State GetState() {
         return state;
+    }
+
+    public int GetGameMode() {
+        return gameMode;
     }
 }
