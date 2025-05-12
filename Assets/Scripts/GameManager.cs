@@ -5,6 +5,7 @@ public class GameManager : MonoBehaviour {
     private int gameMode;
     
     public enum State {
+        GameCountdown,
         GamePlaying,
         GameOver
     }
@@ -16,6 +17,12 @@ public class GameManager : MonoBehaviour {
     public class OnGameOverEventArgs {
         public Player winner;
     }
+
+    public EventHandler<OnCountdownChangedEventArgs> OnCountdownChanged;
+    public class OnCountdownChangedEventArgs {
+        public float countdownTimer;
+    }
+        
     
     [Header("Players")]
     [SerializeField] private Player leftPlayer;
@@ -26,6 +33,11 @@ public class GameManager : MonoBehaviour {
     [Header("Ball")]
     [SerializeField] private Transform ballSpawnPoint;
     [SerializeField] private Ball ballPrefab;
+
+    [Header("GameSettings")] 
+    private float countdownTimer = 3f;
+    private float countdownTimerMax = 3f;
+    
     public static GameManager Instance { get; private set; }
 
     private State state;
@@ -44,11 +56,29 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Start() {
-        state = State.GamePlaying;
-        
-        CreateBall(ballSpawnPoint);
+        state = State.GameCountdown;
         
         GoalLine.OnGoalScored += GoalLine_OnGoalScored;
+    }
+
+    private void Update() {
+        switch (state) {
+            case State.GameCountdown:
+                countdownTimer -= Time.deltaTime;
+                OnCountdownChanged?.Invoke(this, new OnCountdownChangedEventArgs {
+                    countdownTimer = countdownTimer
+                });
+                if (countdownTimer <= 0) {
+                    countdownTimer = countdownTimerMax;
+                    state = State.GamePlaying;
+                    CreateBall(ballSpawnPoint);
+                }
+                break;
+            case State.GamePlaying:
+                break;
+            case State.GameOver:
+                break;
+        }
     }
 
     private void OnDestroy() {
@@ -109,9 +139,7 @@ public class GameManager : MonoBehaviour {
         
         OnGameReset?.Invoke(this, EventArgs.Empty);
 
-        state = State.GamePlaying;
-        
-        CreateBall(ballSpawnPoint);
+        state = State.GameCountdown;
     }
 
     public State GetState() {
