@@ -4,11 +4,19 @@ using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
 public class Player : MonoBehaviour {
-    private enum PlayerSide {
+    public enum PlayerSide {
         PlayerL,
         PlayerR
     }
     public event EventHandler OnDamageTaken;
+    public event EventHandler<OnServeDirectionChangedEventArgs> OnServeDirectionChanged;
+    public class OnServeDirectionChangedEventArgs {
+        public Vector2 serveDirection;
+    }
+
+    public event EventHandler OnBallGrabbed;
+    public event EventHandler OnBallServed;
+    
     [SerializeField] private Transform playerVisual;
     [SerializeField] private Transform playerBallHoldPoint;
 
@@ -29,7 +37,7 @@ public class Player : MonoBehaviour {
     private float healthLeft;
     
     [Header("ServeDirectionDraw")]
-    private float yServeDirectionMax = 3f;
+    private float yServeDirectionMax = 2f;
     private float yServeDirection = 0f;
     private int yServeDirectionStep = 1; // 1 = up | -1 = down
     
@@ -74,12 +82,15 @@ public class Player : MonoBehaviour {
 
     private void HandleServing() {
         if (TryGetBall(out Ball ball)) {
+            OnBallGrabbed?.Invoke(this, EventArgs.Empty);
+            
             if (!isAIControlled) {
                 // Start direction draw
                 Vector2 serveDirection = DrawServeDirection();
 
                 if (Input.GetKeyDown(KeyCode.Space)) {
                     ball.PerformServe(serveDirection);
+                    OnBallServed?.Invoke(this, EventArgs.Empty);
                 }
             } else {
                 timeToServe += Time.deltaTime;
@@ -88,6 +99,7 @@ public class Player : MonoBehaviour {
                 if (timeToServe >= timeToServeMax) {
                     timeToServe = 0f;
                     ball.PerformServe(serveDirection);
+                    OnBallServed?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -170,7 +182,17 @@ public class Player : MonoBehaviour {
         if (Math.Abs(yServeDirection) >= yServeDirectionMax) {
             yServeDirectionStep *= -1;
         }
+
+        Vector2 serveDirection = new Vector2(xServeDirection, yServeDirection);
         
-        return new Vector2(xServeDirection, yServeDirection);
+        OnServeDirectionChanged?.Invoke(this, new OnServeDirectionChangedEventArgs {
+            serveDirection = serveDirection
+        });
+        
+        return serveDirection;
+    }
+
+    public PlayerSide GetPlayerSide() {
+        return playerSide;
     }
 }
