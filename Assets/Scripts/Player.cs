@@ -4,9 +4,9 @@ using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
 public class Player : MonoBehaviour {
-    private enum PlayerNumber {
-        Player1,
-        Player2
+    private enum PlayerSide {
+        PlayerL,
+        PlayerR
     }
     public event EventHandler OnDamageTaken;
     [SerializeField] private Transform playerVisual;
@@ -15,7 +15,7 @@ public class Player : MonoBehaviour {
     [Header("Player Settings")] 
     public string playerName;
     [SerializeField] private float moveSpeed = 12f;
-    [SerializeField] private PlayerNumber playerNumber;
+    [SerializeField] private PlayerSide playerSide;
     private float playerHeight;
     
     [Header("AI")]
@@ -27,6 +27,11 @@ public class Player : MonoBehaviour {
     [Header("Health")] 
     [SerializeField] private float maxHealth = 100f;
     private float healthLeft;
+    
+    [Header("ServeDirectionDraw")]
+    private float yServeDirectionMax = 3f;
+    private float yServeDirection = 0f;
+    private int yServeDirectionStep = 1; // 1 = up | -1 = down
     
 
     // The yMoveBound is max absolute position value for the player to hit the walls
@@ -40,7 +45,7 @@ public class Player : MonoBehaviour {
 
     private void Start() {
         yMoveBound = (Field.Instance.GetFieldHeight() - playerHeight) / 2;
-        isAIControlled = playerNumber == PlayerNumber.Player2 && GameManager.Instance.GetGameMode() == 1;
+        isAIControlled = playerSide == PlayerSide.PlayerR && GameManager.Instance.GetGameMode() == 1;
     }
 
     private void Update() {
@@ -57,8 +62,8 @@ public class Player : MonoBehaviour {
     }
 
     private void HandleMovement() {
-        KeyCode up = playerNumber == PlayerNumber.Player1 ? KeyCode.W : KeyCode.UpArrow;
-        KeyCode down = playerNumber == PlayerNumber.Player1 ? KeyCode.S : KeyCode.DownArrow;
+        KeyCode up = playerSide == PlayerSide.PlayerL ? KeyCode.W : KeyCode.UpArrow;
+        KeyCode down = playerSide == PlayerSide.PlayerL ? KeyCode.S : KeyCode.DownArrow;
         
         if (Input.GetKey(up)) {
             transform.position += Vector3.up * (moveSpeed * Time.deltaTime);
@@ -70,17 +75,19 @@ public class Player : MonoBehaviour {
     private void HandleServing() {
         if (TryGetBall(out Ball ball)) {
             if (!isAIControlled) {
+                // Start direction draw
+                Vector2 serveDirection = DrawServeDirection();
+
                 if (Input.GetKeyDown(KeyCode.Space)) {
-                    var sign = Mathf.Sign(playerBallHoldPoint.transform.localPosition.x);
-                    ball.PerformServe(new Vector2(sign, 0));
+                    ball.PerformServe(serveDirection);
                 }
             } else {
                 timeToServe += Time.deltaTime;
+                Vector2 serveDirection = DrawServeDirection();
                 
                 if (timeToServe >= timeToServeMax) {
                     timeToServe = 0f;
-                    var sign = Mathf.Sign(playerBallHoldPoint.transform.localPosition.x);
-                    ball.PerformServe(new Vector2(sign, 0));
+                    ball.PerformServe(serveDirection);
                 }
             }
         }
@@ -152,5 +159,18 @@ public class Player : MonoBehaviour {
     public void Reset() {
         transform.position = new Vector2(transform.position.x, 0);
         healthLeft = maxHealth;
+    }
+
+    private Vector2 DrawServeDirection() {
+        // Player should serve to an opposite direction of his field position
+        float xServeDirection = playerSide == PlayerSide.PlayerL ? 1f : -1f;
+        float drawSpeed = 2f;
+
+        yServeDirection += yServeDirectionStep * (drawSpeed * Time.deltaTime);
+        if (Math.Abs(yServeDirection) >= yServeDirectionMax) {
+            yServeDirectionStep *= -1;
+        }
+        
+        return new Vector2(xServeDirection, yServeDirection);
     }
 }

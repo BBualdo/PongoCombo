@@ -1336,9 +1336,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerVisual: {fileID: 1226854827}
   playerBallHoldPoint: {fileID: 1294069706}
-  playerName: "Sebu\u015B"
+  playerName: Player 1
   moveSpeed: 12
-  playerNumber: 0
+  playerSide: 0
   isAIControlled: 0
   followSpeed: 5
   maxHealth: 100
@@ -3899,9 +3899,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerVisual: {fileID: 1999481680}
   playerBallHoldPoint: {fileID: 1645402974}
-  playerName: AI
+  playerName: Player 2
   moveSpeed: 12
-  playerNumber: 1
+  playerSide: 1
   isAIControlled: 1
   followSpeed: 5
   maxHealth: 100

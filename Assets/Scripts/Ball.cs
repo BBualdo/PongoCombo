@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Ball : MonoBehaviour {
     public event EventHandler OnDamageIncreased;
@@ -11,7 +12,7 @@ public class Ball : MonoBehaviour {
     private float currentDamage = 1;
 
     private void Start() {
-        moveDirection = new Vector2(-1, 0);
+        moveDirection = GetRandomDirection();
     }
 
     private void Update() {
@@ -62,5 +63,15 @@ public class Ball : MonoBehaviour {
 
     public float GetBallDamage() {
         return currentDamage;
+    }
+
+    private Vector2 GetRandomDirection() {
+        float randomX = Random.Range(-1f, 1.01f);
+        if (randomX < 0) randomX = -1f;
+        else randomX = 1f;
+        
+        float randomY = Random.Range(-3f, 3.01f);
+        
+        return new Vector2(randomX, randomY);
     }
 }
