@@ -11,17 +11,18 @@ public class GameManager : MonoBehaviour {
     }
     
     public Action<Ball> OnBallSpawned;
-    public EventHandler OnGameReset;
+    public event EventHandler OnGameReset;
 
-    public EventHandler<OnGameOverEventArgs> OnGameOver;
+    public event EventHandler<OnGameOverEventArgs> OnGameOver;
     public class OnGameOverEventArgs {
         public Player winner;
     }
 
-    public EventHandler<OnCountdownChangedEventArgs> OnCountdownChanged;
+    public event EventHandler<OnCountdownChangedEventArgs> OnCountdownChanged;
     public class OnCountdownChangedEventArgs {
         public float countdownTimer;
     }
+    public event EventHandler OnBallScored;
         
     
     [Header("Players")]
@@ -95,6 +96,7 @@ public class GameManager : MonoBehaviour {
         }
         
         playerLost.TakeDamage(currentBall.GetBallDamage());
+        OnBallScored?.Invoke(this, EventArgs.Empty);
 
         if (IsGameOver()) {
             OnGameOver?.Invoke(this, new OnGameOverEventArgs {

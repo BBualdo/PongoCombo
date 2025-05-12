@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e7740bec92352c4cbfa041116d8e7f7, type: 3}
+  m_Name: SFXListSO
+  m_EditorClassIdentifier: 
+  paletteHitSounds:
+  - {fileID: 8300000, guid: ab5ca7d5852756c43b23b90b20f9c283, type: 3}
+  - {fileID: 8300000, guid: 221ee3e940b885943bfecfcb528dbc60, type: 3}
+  - {fileID: 8300000, guid: 18090ff07598c8b40a445553f4e3ab59, type: 3}
+  - {fileID: 8300000, guid: aa2994e4b0858f04da3215448d35b701, type: 3}
+  - {fileID: 8300000, guid: 9c35b71e82611e24ab9ee424f5142ccd, type: 3}
+  - {fileID: 8300000, guid: 508b4096de7c1df4285df404c785dd00, type: 3}
+  - {fileID: 8300000, guid: 751bb2f7e226c994297b81b724b3cb6d, type: 3}
+  - {fileID: 8300000, guid: 753b15d067323974082277b09aeaa94e, type: 3}
+  wallHitSounds:
+  - {fileID: 8300000, guid: 860725dd1eb4cab4fb56313467d4de07, type: 3}
+  - {fileID: 8300000, guid: 853205107346a33469f06a22baae5fd6, type: 3}
+  - {fileID: 8300000, guid: d4685fb39f2c92c458c4cafd7842a678, type: 3}
+  - {fileID: 8300000, guid: 2ae1bad6fec4c2b42810fa0f969c3234, type: 3}
+  - {fileID: 8300000, guid: dd7697b785042994a9f0d9e1a787d7fb, type: 3}
+  - {fileID: 8300000, guid: 0c9ff8f9b52ed3f43942b449089de535, type: 3}
+  - {fileID: 8300000, guid: c07a0296b9f5c3141a60145e419ab0a9, type: 3}
+  - {fileID: 8300000, guid: 5503bc297be748745b517c3b564c9bb7, type: 3}
+  floorHitSounds:
+  - {fileID: 8300000, guid: 905c570f3ed8f8b469962d9782aa9b83, type: 3}
+  - {fileID: 8300000, guid: 8096186afd95e4c4ea2d1dfe14a48619, type: 3}

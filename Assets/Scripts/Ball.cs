@@ -4,6 +4,8 @@ using Random = UnityEngine.Random;
 
 public class Ball : MonoBehaviour {
     public event EventHandler OnDamageIncreased;
+    public event EventHandler OnPlayerHit;
+    public event EventHandler OnWallHit;
     
     [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private int damageIncreaseValue = 1;
@@ -29,11 +31,15 @@ public class Ball : MonoBehaviour {
         
         moveDirection = Vector2.Reflect(moveDirection, other.GetContact(0).normal);
         if (other.gameObject.TryGetComponent<Player>(out Player player)) {
+            OnPlayerHit?.Invoke(this, EventArgs.Empty);
+            
             float offset = player.GetHitOffsetNormalized(other.GetContact(0));
             moveDirection.y += offset;
             CorrectDirectionX();
 
             IncreaseBallDamage();
+        } else {
+            OnWallHit?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -52,6 +58,7 @@ public class Ball : MonoBehaviour {
 
     public void PerformServe(Vector2 serveDirection) {
         transform.parent = null;
+        OnPlayerHit?.Invoke(this, EventArgs.Empty);
         moveDirection = serveDirection;
         canMove = true;
     }
