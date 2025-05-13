@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour {
+    public static GameManager Instance { get; private set; }
+    
     private int gameMode;
     
     public enum State {
@@ -39,18 +41,15 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private Ball ballPrefab;
 
     [Header("GameSettings")] 
+    [SerializeField] private int ballDamageIncreaseValue = 1;
     private float countdownTimer = 3f;
     private float countdownTimerMax = 3f;
-
-    [Header("GameTimer")] 
     private float gameTimer;
     private float additionalEffectsTimerThreshhold = 60f;
     
-    public static GameManager Instance { get; private set; }
-
     private State state;
-
     private Ball currentBall;
+    private int gamePhase;
 
     private void Awake() {
         if (Instance == null) {
@@ -81,6 +80,7 @@ public class GameManager : MonoBehaviour {
                 if (countdownTimer <= 0) {
                     countdownTimer = countdownTimerMax;
                     state = State.GamePlaying;
+                    gamePhase = 1;
                     CreateBall(ballSpawnPoint);
                 }
                 break;
@@ -90,11 +90,9 @@ public class GameManager : MonoBehaviour {
                     gameTime = gameTimer
                 });
                 
-                if (gameTimer >= additionalEffectsTimerThreshhold) {
-                    // Start shrinking players height if not started
-                    StartPlayersShrinking();
-                    
-                    // Double ball's damage increase if isn't doubled
+                if (gameTimer >= additionalEffectsTimerThreshhold * gamePhase) {
+                    gamePhase++;
+                    ShrinkPlayers();
                     DoubleBallDamage();
                 }
                 break;
@@ -104,11 +102,18 @@ public class GameManager : MonoBehaviour {
     }
 
     private void DoubleBallDamage() {
-        
+        ballDamageIncreaseValue *= 2;
     }
 
-    private void StartPlayersShrinking() {
+    private void ShrinkPlayers() {
+        float minPlayerHeight = .5f;
+        if (leftPlayer.GetPlayerHeight() > minPlayerHeight) {
+            leftPlayer.SetPlayerHeight(leftPlayer.GetPlayerHeight() - .5f);
+        }
         
+        if (rightPlayer.GetPlayerHeight() > minPlayerHeight) {
+            rightPlayer.SetPlayerHeight(rightPlayer.GetPlayerHeight() - .5f);
+        }
     }
 
     private void OnDestroy() {
@@ -187,5 +192,9 @@ public class GameManager : MonoBehaviour {
         OnGameTimeUpdate?.Invoke(this, new OnGameTimeUpdateEventArgs {
             gameTime = gameTimer
         });
+    }
+
+    public float GetBallDamageIncreaseValue() {
+        return ballDamageIncreaseValue;
     }
 }

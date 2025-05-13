@@ -8,7 +8,6 @@ public class Ball : MonoBehaviour {
     public event EventHandler OnWallHit;
     
     [SerializeField] private float moveSpeed = 10f;
-    [SerializeField] private int damageIncreaseValue = 1;
     private Vector2 moveDirection;
     private bool canMove = true;
     private float currentDamage = 1;
@@ -64,7 +63,7 @@ public class Ball : MonoBehaviour {
     }
 
     private void IncreaseBallDamage() {
-        currentDamage += damageIncreaseValue;
+        currentDamage += GameManager.Instance.GetBallDamageIncreaseValue();
         OnDamageIncreased?.Invoke(this, EventArgs.Empty);
     }
 

@@ -17,8 +17,10 @@ public class Player : MonoBehaviour {
     public event EventHandler OnBallGrabbed;
     public event EventHandler OnBallServed;
     
+    [Header("Player Components")]
     [SerializeField] private Transform playerVisual;
     [SerializeField] private Transform playerBallHoldPoint;
+    private BoxCollider2D playerCollider;
 
     [Header("Player Settings")] 
     public string playerName;
@@ -41,18 +43,18 @@ public class Player : MonoBehaviour {
     private float yServeDirection = 0f;
     private int yServeDirectionStep = 1; // 1 = up | -1 = down
     
-
     // The yMoveBound is max absolute position value for the player to hit the walls
     private float yMoveBound;
-    private float yMoveBoundOffset = 0.1f;
 
     private void Awake() {
-        playerHeight = playerVisual.localScale.y;
+        playerCollider = GetComponent<BoxCollider2D>();
+        SetPlayerHeight();
+        playerHeight = GetPlayerHeight();
         healthLeft = maxHealth;
     }
 
     private void Start() {
-        yMoveBound = (Field.Instance.GetFieldHeight() - playerHeight) / 2;
+        UpdateYMoveBound();
         isAIControlled = playerSide == PlayerSide.PlayerR && GameManager.Instance.GetGameMode() == 1;
     }
 
@@ -67,6 +69,10 @@ public class Player : MonoBehaviour {
             ApplyPlayerMoveBounds();
             HandleServing();
         }
+    }
+
+    private void UpdateYMoveBound() {
+        yMoveBound = (Field.Instance.GetFieldHeight() - playerHeight) / 2;
     }
 
     private void HandleMovement() {
@@ -194,5 +200,19 @@ public class Player : MonoBehaviour {
 
     public PlayerSide GetPlayerSide() {
         return playerSide;
+    }
+
+    public float GetPlayerHeight() {
+        return playerHeight;
+    }
+
+    public void SetPlayerHeight(float newHeight = 2.5f) {
+        playerVisual.localScale = new Vector3(playerVisual.localScale.x, newHeight, playerVisual.localScale.z);
+        playerHeight = playerVisual.localScale.y;
+
+        Vector2 colliderSize = playerCollider.size;
+        playerCollider.size = new Vector2(colliderSize.x, newHeight);
+        
+        UpdateYMoveBound();
     }
 }
