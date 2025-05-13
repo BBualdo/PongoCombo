@@ -23,7 +23,10 @@ public class GameManager : MonoBehaviour {
         public float countdownTimer;
     }
     public event EventHandler OnBallScored;
-        
+    public event EventHandler<OnGameTimeUpdateEventArgs> OnGameTimeUpdate;
+    public class OnGameTimeUpdateEventArgs {
+        public float gameTime;
+    }
     
     [Header("Players")]
     [SerializeField] private Player leftPlayer;
@@ -38,6 +41,10 @@ public class GameManager : MonoBehaviour {
     [Header("GameSettings")] 
     private float countdownTimer = 3f;
     private float countdownTimerMax = 3f;
+
+    [Header("GameTimer")] 
+    private float gameTimer;
+    private float additionalEffectsTimerThreshhold = 60f;
     
     public static GameManager Instance { get; private set; }
 
@@ -58,6 +65,8 @@ public class GameManager : MonoBehaviour {
 
     private void Start() {
         state = State.GameCountdown;
+
+        ResetGameTimer();
         
         GoalLine.OnGoalScored += GoalLine_OnGoalScored;
     }
@@ -76,10 +85,30 @@ public class GameManager : MonoBehaviour {
                 }
                 break;
             case State.GamePlaying:
+                gameTimer += Time.deltaTime;
+                OnGameTimeUpdate?.Invoke(this, new OnGameTimeUpdateEventArgs {
+                    gameTime = gameTimer
+                });
+                
+                if (gameTimer >= additionalEffectsTimerThreshhold) {
+                    // Start shrinking players height if not started
+                    StartPlayersShrinking();
+                    
+                    // Double ball's damage increase if isn't doubled
+                    DoubleBallDamage();
+                }
                 break;
             case State.GameOver:
                 break;
         }
+    }
+
+    private void DoubleBallDamage() {
+        
+    }
+
+    private void StartPlayersShrinking() {
+        
     }
 
     private void OnDestroy() {
@@ -138,6 +167,7 @@ public class GameManager : MonoBehaviour {
     public void RestartGame() {
         leftPlayer.Reset();
         rightPlayer.Reset();
+        ResetGameTimer();
         
         OnGameReset?.Invoke(this, EventArgs.Empty);
 
@@ -150,5 +180,12 @@ public class GameManager : MonoBehaviour {
 
     public int GetGameMode() {
         return gameMode;
+    }
+
+    private void ResetGameTimer() {
+        gameTimer = 0f;
+        OnGameTimeUpdate?.Invoke(this, new OnGameTimeUpdateEventArgs {
+            gameTime = gameTimer
+        });
     }
 }

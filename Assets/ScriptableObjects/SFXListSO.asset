@@ -33,3 +33,5 @@ MonoBehaviour:
   floorHitSounds:
   - {fileID: 8300000, guid: 905c570f3ed8f8b469962d9782aa9b83, type: 3}
   - {fileID: 8300000, guid: 8096186afd95e4c4ea2d1dfe14a48619, type: 3}
+  countdownSoundShort: {fileID: 8300000, guid: 0499bdb3d8413d64ebe13b5fec46b26d, type: 3}
+  countdownSoundLong: {fileID: 8300000, guid: 84109f30240affe44a1e34a8e8a1989a, type: 3}
