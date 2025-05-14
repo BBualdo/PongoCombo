@@ -40,7 +40,7 @@ public class DifficultySelectUI : MonoBehaviour
 
     private void SelectDifficulty(Difficulty difficulty) {
         PlayerPrefs.SetInt(PlayerPrefsHelper.GAME_DIFFICULTY, (int)difficulty);
-        SceneManager.LoadScene("GameScene");
+        Loader.Instance.LoadScene(Loader.Scene.GameScene);
     }
     
     private void Show() {

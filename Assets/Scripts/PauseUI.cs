@@ -12,7 +12,7 @@ public class PauseUI : MonoBehaviour {
         resumeButton.onClick.AddListener(() => TogglePause());
         exitButton.onClick.AddListener(() => {
             TogglePause();
-            SceneManager.LoadScene("MainMenuScene");
+            SceneManager.LoadScene(nameof(Loader.Scene.MainMenuScene));
         });
         
         Hide();

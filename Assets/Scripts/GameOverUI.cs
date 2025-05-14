@@ -18,8 +18,8 @@ public class GameOverUI : MonoBehaviour {
             Hide();
         });
         
-        exitGameButton.onClick.AddListener(() => {
-            SceneManager.LoadScene("Scenes/MainMenuScene");
+        exitGameButton.onClick.AddListener(() => { 
+            SceneManager.LoadScene(nameof(Loader.Scene.MainMenuScene));
         });
     }
 
