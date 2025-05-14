@@ -35,3 +35,5 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 8096186afd95e4c4ea2d1dfe14a48619, type: 3}
   countdownSoundShort: {fileID: 8300000, guid: 0499bdb3d8413d64ebe13b5fec46b26d, type: 3}
   countdownSoundLong: {fileID: 8300000, guid: 84109f30240affe44a1e34a8e8a1989a, type: 3}
+  shrinkingSound: {fileID: 8300000, guid: 55d039b4f31ee644e980cdd7b06623e6, type: 3}
+  buttonHoverSound: {fileID: 8300000, guid: fc75c27d7f8009d479677198589a5407, type: 3}

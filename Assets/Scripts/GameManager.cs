@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour {
         public float gameTime;
     }
     public event EventHandler OnGamePaused;
+    public event EventHandler OnPlayersShrink;
     
     [Header("Players")]
     [SerializeField] private Player leftPlayer;
@@ -64,6 +65,10 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Start() {
+        if (SFXManager.Instance != null) {
+            SFXManager.Instance.RegisterGameplayEvents(this);    
+        }
+        
         state = State.GameCountdown;
 
         ResetGameTimer();
@@ -118,6 +123,7 @@ public class GameManager : MonoBehaviour {
         float minPlayerHeight = .5f;
         if (leftPlayer.GetPlayerHeight() > minPlayerHeight) {
             leftPlayer.SetPlayerHeight(leftPlayer.GetPlayerHeight() - .5f);
+            OnPlayersShrink?.Invoke(this, EventArgs.Empty);
         }
         
         if (rightPlayer.GetPlayerHeight() > minPlayerHeight) {
@@ -127,6 +133,9 @@ public class GameManager : MonoBehaviour {
 
     private void OnDestroy() {
         GoalLine.OnGoalScored -= GoalLine_OnGoalScored;
+        if (SFXManager.Instance != null) {
+            SFXManager.Instance.UnregisterGameplayEvents(this);
+        }
     }
 
     private void GoalLine_OnGoalScored(object sender, GoalLine.OnGoalScoredEventArgs e) {

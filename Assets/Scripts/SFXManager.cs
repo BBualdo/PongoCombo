@@ -19,21 +19,28 @@ public class SFXManager : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-    private void Start() {
-        GameManager.Instance.OnBallSpawned += GameManager_OnBallSpawned;
-        GameManager.Instance.OnBallScored += GameManager_OnBallScored;
-        GameManager.Instance.OnCountdownChanged += GameManager_OnCountdownChanged;
+    public void RegisterGameplayEvents(GameManager gameManager) {
+        gameManager.OnBallSpawned += GameManager_OnBallSpawned;
+        gameManager.OnBallScored += GameManager_OnBallScored;
+        gameManager.OnCountdownChanged += GameManager_OnCountdownChanged;
+        gameManager.OnPlayersShrink += GameManager_OnPlayersShrink;
         
-        ball = GameManager.Instance.GetCurrentBall();
+        ball = gameManager.GetCurrentBall();
         if (ball != null) {
             ball.OnPlayerHit += Ball_OnPlayerHit;
             ball.OnWallHit += Ball_OnWallHit;
         }
     }
-    
-    private void OnDestroy() {
-        GameManager.Instance.OnBallSpawned -= GameManager_OnBallSpawned;
-        GameManager.Instance.OnBallScored -= GameManager_OnBallScored;
+
+    public void UnregisterGameplayEvents(GameManager gameManager) {
+        gameManager.OnBallSpawned -= GameManager_OnBallSpawned;
+        gameManager.OnBallScored -= GameManager_OnBallScored;
+        gameManager.OnCountdownChanged -= GameManager_OnCountdownChanged;
+        gameManager.OnPlayersShrink -= GameManager_OnPlayersShrink;
+    }
+
+    private void GameManager_OnPlayersShrink(object sender, EventArgs e) {
+        PlayOneShot(sfxListSO.shrinkingSound);
     }
     
     private void GameManager_OnCountdownChanged(object sender, GameManager.OnCountdownChangedEventArgs e) {
@@ -78,5 +85,9 @@ public class SFXManager : MonoBehaviour
 
     private void PlayOneShot(AudioClip[] clips, float volume = 1f) {
         PlayOneShot(clips[Random.Range(0, clips.Length)], volume);
-    } 
+    }
+
+    public void PlayHoverSound() {
+        PlayOneShot(sfxListSO.buttonHoverSound);
+    }
 }
