@@ -227,6 +227,7 @@ MonoBehaviour:
   rightPlayer: {fileID: 2041008790}
   ballSpawnPoint: {fileID: 1350245734}
   ballPrefab: {fileID: 5786659190198783997, guid: a9410fe208b50004685b5636ceb77e0a, type: 3}
+  ballDamageIncreaseValue: 1
 --- !u!4 &39962587
 Transform:
   m_ObjectHideFlags: 0

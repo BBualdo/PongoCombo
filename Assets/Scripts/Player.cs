@@ -30,7 +30,7 @@ public class Player : MonoBehaviour {
     
     [Header("AI")]
     [SerializeField] private bool isAIControlled;
-    [SerializeField] private float followSpeed = 5f;
+    private float followSpeed;
     private float timeToServe = 0f;
     private float timeToServeMax = 2f;
 
@@ -51,6 +51,7 @@ public class Player : MonoBehaviour {
         SetPlayerHeight();
         playerHeight = GetPlayerHeight();
         healthLeft = maxHealth;
+        followSpeed = CalculateFollowSpeed();
     }
 
     private void Start() {
@@ -69,6 +70,21 @@ public class Player : MonoBehaviour {
             ApplyPlayerMoveBounds();
             HandleServing();
         }
+    }
+
+    private float CalculateFollowSpeed() {
+        int difficulty = PlayerPrefs.GetInt(PlayerPrefsHelper.GAME_DIFFICULTY, 1);
+
+        switch (difficulty) {
+            case 0:
+                return 3f;
+            case 1:
+                return 5f;
+            case 2:
+                return 7f;
+        }
+
+        return 0f;
     }
 
     private void UpdateYMoveBound() {
