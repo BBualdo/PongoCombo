@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour {
     public class OnGameTimeUpdateEventArgs {
         public float gameTime;
     }
+    public event EventHandler OnGamePaused;
     
     [Header("Players")]
     [SerializeField] private Player leftPlayer;
@@ -99,10 +100,18 @@ public class GameManager : MonoBehaviour {
             case State.GameOver:
                 break;
         }
+
+        HandlePause();
     }
 
     private void DoubleBallDamage() {
         ballDamageIncreaseValue *= 2;
+    }
+
+    private void HandlePause() {
+        if (state != State.GameOver && Input.GetKeyDown(KeyCode.Escape)) {
+            TogglePause();
+        }
     }
 
     private void ShrinkPlayers() {
@@ -196,5 +205,15 @@ public class GameManager : MonoBehaviour {
 
     public float GetBallDamageIncreaseValue() {
         return ballDamageIncreaseValue;
+    }
+
+    public void TogglePause() {
+        OnGamePaused?.Invoke(this, EventArgs.Empty);
+        
+        if (Time.timeScale != 0) {
+            Time.timeScale = 0;
+        } else {
+            Time.timeScale = 1;
+        }
     }
 }
