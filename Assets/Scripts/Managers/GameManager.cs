@@ -3,8 +3,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
-    
-    private int gameMode;
+    public int GameMode { get; private set; }
     
     public enum State {
         GameCountdown,
@@ -19,7 +18,7 @@ public class GameManager : MonoBehaviour {
         public Player winner;
     }
     
-    private State state;
+    public State GameState { get; private set; }
 
     private void Awake() {
         if (Instance == null) {
@@ -29,7 +28,7 @@ public class GameManager : MonoBehaviour {
             Destroy(gameObject);
         }
 
-        gameMode = PlayerPrefs.GetInt(PlayerPrefsHelper.GAME_MODE);
+        GameMode = PlayerPrefs.GetInt(PlayerPrefsHelper.GAME_MODE);
     }
 
     private void Start() {
@@ -37,7 +36,7 @@ public class GameManager : MonoBehaviour {
         GameTimeManager.Instance.OnCountdownEnd += GameTimeManager_OnCountdownEnd;
         GameTimeManager.Instance.OnGameTimePhaseIncreased += GameTimeManager_OnGameTimePhaseIncreased;
         
-        state = State.GameCountdown;
+        GameState = State.GameCountdown;
 
         GameTimeManager.Instance.ResetGameTimer();
     }
@@ -49,7 +48,7 @@ public class GameManager : MonoBehaviour {
     }
     
     private void Update() {
-        switch (state) {
+        switch (GameState) {
             case State.GameCountdown:
                 GameTimeManager.Instance.HandleCountdownTimer();
                 break;
@@ -69,7 +68,7 @@ public class GameManager : MonoBehaviour {
     }
     
     private void GameTimeManager_OnCountdownEnd(object sender, EventArgs e) {
-        state = State.GamePlaying;
+        GameState = State.GamePlaying;
         BallManager.Instance.CreateBall();
     }
 
@@ -79,7 +78,7 @@ public class GameManager : MonoBehaviour {
                 winner = e.scoredPlayer
             });
 
-            state = State.GameOver;
+            GameState = State.GameOver;
 
             return;
         }
@@ -89,7 +88,7 @@ public class GameManager : MonoBehaviour {
     }
     
     private void HandlePauseInput() {
-        if (state != State.GameOver && Input.GetKeyDown(KeyCode.Escape)) {
+        if (GameState != State.GameOver && Input.GetKeyDown(KeyCode.Escape)) {
             GameTimeManager.Instance.TogglePause();
         }
     }
@@ -97,18 +96,11 @@ public class GameManager : MonoBehaviour {
     public void RestartGame() {
         PlayerManager.Instance.GetPlayer(PlayerManager.PlayerSide.PlayerL).Reset();
         PlayerManager.Instance.GetPlayer(PlayerManager.PlayerSide.PlayerR).Reset();
+        BallManager.Instance.ResetBallDamage();
         GameTimeManager.Instance.ResetGameTimer();
         
         OnGameReset?.Invoke(this, EventArgs.Empty);
 
-        state = State.GameCountdown;
-    }
-
-    public State GetState() {
-        return state;
-    }
-
-    public int GetGameMode() {
-        return gameMode;
+        GameState = State.GameCountdown;
     }
 }

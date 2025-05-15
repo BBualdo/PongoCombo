@@ -52,11 +52,11 @@ public class Player : MonoBehaviour {
 
     private void Start() {
         UpdateYMoveBound();
-        isAIControlled = playerSide == PlayerManager.PlayerSide.PlayerR && GameManager.Instance.GetGameMode() == 1;
+        isAIControlled = playerSide == PlayerManager.PlayerSide.PlayerR && GameManager.Instance.GameMode == 1;
     }
 
     private void Update() {
-        if (GameManager.Instance.GetState() != GameManager.State.GameOver) {
+        if (GameManager.Instance.GameState != GameManager.State.GameOver) {
             if (!isAIControlled) {
                 HandleMovement();
             } else {
@@ -187,6 +187,7 @@ public class Player : MonoBehaviour {
     public void Reset() {
         transform.position = new Vector2(transform.position.x, 0);
         HealthLeft = MaxHealth;
+        SetPlayerHeight();
     }
 
     private Vector2 DrawServeDirection() {

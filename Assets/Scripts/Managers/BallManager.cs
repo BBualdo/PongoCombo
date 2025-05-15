@@ -59,4 +59,8 @@ public class BallManager : MonoBehaviour {
     public void DoubleBallDamage() {
         ballDamageIncreaseValue *= 2;
     }
+
+    public void ResetBallDamage() {
+        ballDamageIncreaseValue = 1;
+    }
 }
