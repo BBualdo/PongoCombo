@@ -18,26 +18,8 @@ public class GameManager : MonoBehaviour {
     public class OnGameOverEventArgs {
         public Player winner;
     }
-
-    public event EventHandler<OnCountdownChangedEventArgs> OnCountdownChanged;
-    public class OnCountdownChangedEventArgs {
-        public float countdownTimer;
-    }
-    
-    public event EventHandler<OnGameTimeUpdateEventArgs> OnGameTimeUpdate;
-    public class OnGameTimeUpdateEventArgs {
-        public float gameTime;
-    }
-    public event EventHandler OnGamePaused;
-
-    [Header("GameSettings")] 
-    private float countdownTimer = 3f;
-    private float countdownTimerMax = 3f;
-    private float gameTimer;
-    private float additionalEffectsTimerThreshhold = 60f;
     
     private State state;
-    private int gamePhase;
 
     private void Awake() {
         if (Instance == null) {
@@ -51,15 +33,44 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Start() {
-        if (SFXManager.Instance != null) {
-            SFXManager.Instance.RegisterGameplayEvents(this);    
-        }
-        
         PlayerManager.Instance.OnBallScored += PlayerManager_OnBallScored;
+        GameTimeManager.Instance.OnCountdownEnd += GameTimeManager_OnCountdownEnd;
+        GameTimeManager.Instance.OnGameTimePhaseIncreased += GameTimeManager_OnGameTimePhaseIncreased;
         
         state = State.GameCountdown;
 
-        ResetGameTimer();
+        GameTimeManager.Instance.ResetGameTimer();
+    }
+
+    private void OnDestroy() {
+        PlayerManager.Instance.OnBallScored -= PlayerManager_OnBallScored;
+        GameTimeManager.Instance.OnCountdownEnd -= GameTimeManager_OnCountdownEnd;
+        GameTimeManager.Instance.OnGameTimePhaseIncreased -= GameTimeManager_OnGameTimePhaseIncreased;
+    }
+    
+    private void Update() {
+        switch (state) {
+            case State.GameCountdown:
+                GameTimeManager.Instance.HandleCountdownTimer();
+                break;
+            case State.GamePlaying:
+                GameTimeManager.Instance.HandleGameTimer();
+                break;
+            case State.GameOver:
+                break;
+        }
+
+        HandlePauseInput();
+    }
+    
+    private void GameTimeManager_OnGameTimePhaseIncreased(object sender, EventArgs e) {
+        PlayerManager.Instance.ShrinkPlayers();
+        BallManager.Instance.DoubleBallDamage();
+    }
+    
+    private void GameTimeManager_OnCountdownEnd(object sender, EventArgs e) {
+        state = State.GamePlaying;
+        BallManager.Instance.CreateBall();
     }
 
     private void PlayerManager_OnBallScored(object sender, PlayerManager.OnBallScoredEventArgs e) {
@@ -76,57 +87,17 @@ public class GameManager : MonoBehaviour {
         BallManager.Instance.CreateBall(e.lostPlayer.GetPlayerBallHoldPoint());
         BallManager.Instance.GetCurrentBall().StopMoving();
     }
-
-    private void Update() {
-        switch (state) {
-            case State.GameCountdown:
-                countdownTimer -= Time.deltaTime;
-                OnCountdownChanged?.Invoke(this, new OnCountdownChangedEventArgs {
-                    countdownTimer = countdownTimer
-                });
-                if (countdownTimer <= 0) {
-                    countdownTimer = countdownTimerMax;
-                    state = State.GamePlaying;
-                    gamePhase = 1;
-                    BallManager.Instance.CreateBall();
-                }
-                break;
-            case State.GamePlaying:
-                gameTimer += Time.deltaTime;
-                OnGameTimeUpdate?.Invoke(this, new OnGameTimeUpdateEventArgs {
-                    gameTime = gameTimer
-                });
-                
-                if (gameTimer >= additionalEffectsTimerThreshhold * gamePhase) {
-                    gamePhase++;
-                    PlayerManager.Instance.ShrinkPlayers();
-                    BallManager.Instance.DoubleBallDamage();
-                }
-                break;
-            case State.GameOver:
-                break;
-        }
-
-        HandlePause();
-    }
-
-    private void HandlePause() {
+    
+    private void HandlePauseInput() {
         if (state != State.GameOver && Input.GetKeyDown(KeyCode.Escape)) {
-            TogglePause();
+            GameTimeManager.Instance.TogglePause();
         }
     }
     
-    private void OnDestroy() {
-        PlayerManager.Instance.OnBallScored -= PlayerManager_OnBallScored;
-        if (SFXManager.Instance != null) {
-            SFXManager.Instance.UnregisterGameplayEvents(this);
-        }
-    }
-
     public void RestartGame() {
         PlayerManager.Instance.GetPlayer(PlayerManager.PlayerSide.PlayerL).Reset();
         PlayerManager.Instance.GetPlayer(PlayerManager.PlayerSide.PlayerR).Reset();
-        ResetGameTimer();
+        GameTimeManager.Instance.ResetGameTimer();
         
         OnGameReset?.Invoke(this, EventArgs.Empty);
 
@@ -139,22 +110,5 @@ public class GameManager : MonoBehaviour {
 
     public int GetGameMode() {
         return gameMode;
-    }
-
-    private void ResetGameTimer() {
-        gameTimer = 0f;
-        OnGameTimeUpdate?.Invoke(this, new OnGameTimeUpdateEventArgs {
-            gameTime = gameTimer
-        });
-    }
-    
-    public void TogglePause() {
-        OnGamePaused?.Invoke(this, EventArgs.Empty);
-        
-        if (Time.timeScale != 0) {
-            Time.timeScale = 0;
-        } else {
-            Time.timeScale = 1;
-        }
     }
 }

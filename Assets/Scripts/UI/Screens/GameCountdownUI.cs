@@ -7,15 +7,15 @@ public class GameCountdownUI : MonoBehaviour
     
     private void Start()
     {
-        GameManager.Instance.OnCountdownChanged += GameManager_OnCountdownChanged;
+        GameTimeManager.Instance.OnCountdownChanged += GameTimeManager_OnCountdownChanged;
         Hide();
     }
 
     private void OnDestroy() {
-        GameManager.Instance.OnCountdownChanged -= GameManager_OnCountdownChanged;
+        GameTimeManager.Instance.OnCountdownChanged -= GameTimeManager_OnCountdownChanged;
     }
 
-    private void GameManager_OnCountdownChanged(object sender, GameManager.OnCountdownChangedEventArgs e) {
+    private void GameTimeManager_OnCountdownChanged(object sender, GameTimeManager.OnCountdownChangedEventArgs e) {
         if (e.countdownTimer > 0) {
             Show();
             countdownText.text = Mathf.CeilToInt(e.countdownTimer).ToString();

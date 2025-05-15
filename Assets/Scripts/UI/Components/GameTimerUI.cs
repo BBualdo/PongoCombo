@@ -6,12 +6,16 @@ public class GameTimerUI : MonoBehaviour {
     [SerializeField] private TMP_Text timerText;
     
     private void Start() {
-        GameManager.Instance.OnGameTimeUpdate += GameManager_OnGameTimeUpdate;
+        GameTimeManager.Instance.OnGameTimeUpdate += GameTimeManager_OnGameTimeUpdate;
         
         UpdateVisual();
     }
 
-    private void GameManager_OnGameTimeUpdate(object sender, GameManager.OnGameTimeUpdateEventArgs e) {
+    private void OnDestroy() {
+        GameTimeManager.Instance.OnGameTimeUpdate -= GameTimeManager_OnGameTimeUpdate;
+    }
+
+    private void GameTimeManager_OnGameTimeUpdate(object sender, GameTimeManager.OnGameTimeUpdateEventArgs e) {
         UpdateVisual(e.gameTime);
     }
 

@@ -8,7 +8,7 @@ public class PauseUI : MonoBehaviour {
     [SerializeField] private Button exitButton;
 
     private void Start() {
-        GameManager.Instance.OnGamePaused += GameManager_OnGamePaused;
+        GameTimeManager.Instance.OnGamePaused += GameTimeManager_OnGamePaused;
         resumeButton.onClick.AddListener(() => TogglePause());
         exitButton.onClick.AddListener(() => {
             TogglePause();
@@ -18,7 +18,7 @@ public class PauseUI : MonoBehaviour {
         Hide();
     }
 
-    private void GameManager_OnGamePaused(object sender, EventArgs e) {
+    private void GameTimeManager_OnGamePaused(object sender, EventArgs e) {
         if (gameObject.activeSelf) {
             Hide();
         } else {
@@ -27,7 +27,7 @@ public class PauseUI : MonoBehaviour {
     }
 
     private void TogglePause() {
-        GameManager.Instance.TogglePause();
+        GameTimeManager.Instance.TogglePause();
     }
 
     private void Show() {

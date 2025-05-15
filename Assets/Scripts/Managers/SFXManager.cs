@@ -19,12 +19,12 @@ public class SFXManager : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-    public void RegisterGameplayEvents(GameManager gameManager) {
-        gameManager.OnCountdownChanged += GameManager_OnCountdownChanged;
+    public void RegisterGameTimeEvents(GameTimeManager gameTimeManager) {
+        gameTimeManager.OnCountdownChanged += GameTimeManager_OnCountdownChanged;
     }
 
-    public void UnregisterGameplayEvents(GameManager gameManager) {
-        gameManager.OnCountdownChanged -= GameManager_OnCountdownChanged;
+    public void UnregisterGameTimeEvents(GameTimeManager gameTimeManager) {
+        gameTimeManager.OnCountdownChanged -= GameTimeManager_OnCountdownChanged;
     }
 
     public void RegisterBallEvents(BallManager ballManager) {
@@ -55,7 +55,7 @@ public class SFXManager : MonoBehaviour
         PlayOneShot(sfxListSO.shrinkingSound);
     }
     
-    private void GameManager_OnCountdownChanged(object sender, GameManager.OnCountdownChangedEventArgs e) {
+    private void GameTimeManager_OnCountdownChanged(object sender, GameTimeManager.OnCountdownChangedEventArgs e) {
         int currentCountdownInt = Mathf.CeilToInt(e.countdownTimer);
         
         if (currentCountdownInt == previousCountdownInt) return;
