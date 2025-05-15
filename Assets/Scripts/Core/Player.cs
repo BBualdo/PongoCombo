@@ -128,7 +128,7 @@ public class Player : MonoBehaviour {
     }
 
     private void HandleAIMovement() {
-        Ball ball = GameManager.Instance.GetCurrentBall();
+        Ball ball = BallManager.Instance.GetCurrentBall();
         float targetY;
         
         if (ball != null) {

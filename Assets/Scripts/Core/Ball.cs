@@ -63,7 +63,7 @@ public class Ball : MonoBehaviour {
     }
 
     private void IncreaseBallDamage() {
-        currentDamage += GameManager.Instance.GetBallDamageIncreaseValue();
+        currentDamage += BallManager.Instance.GetBallDamageIncreaseValue();
         OnDamageIncreased?.Invoke(this, EventArgs.Empty);
     }
 

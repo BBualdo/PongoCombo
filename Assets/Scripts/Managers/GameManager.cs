@@ -12,7 +12,6 @@ public class GameManager : MonoBehaviour {
         GameOver
     }
     
-    public Action<Ball> OnBallSpawned;
     public event EventHandler OnGameReset;
 
     public event EventHandler<OnGameOverEventArgs> OnGameOver;
@@ -38,19 +37,13 @@ public class GameManager : MonoBehaviour {
     private Player playerScored;
     private Player playerLost;
 
-    [Header("Ball")]
-    [SerializeField] private Transform ballSpawnPoint;
-    [SerializeField] private Ball ballPrefab;
-
     [Header("GameSettings")] 
-    [SerializeField] private int ballDamageIncreaseValue = 1;
     private float countdownTimer = 3f;
     private float countdownTimerMax = 3f;
     private float gameTimer;
     private float additionalEffectsTimerThreshhold = 60f;
     
     private State state;
-    private Ball currentBall;
     private int gamePhase;
 
     private void Awake() {
@@ -87,7 +80,7 @@ public class GameManager : MonoBehaviour {
                     countdownTimer = countdownTimerMax;
                     state = State.GamePlaying;
                     gamePhase = 1;
-                    CreateBall(ballSpawnPoint);
+                    BallManager.Instance.CreateBall();
                 }
                 break;
             case State.GamePlaying:
@@ -99,7 +92,7 @@ public class GameManager : MonoBehaviour {
                 if (gameTimer >= additionalEffectsTimerThreshhold * gamePhase) {
                     gamePhase++;
                     ShrinkPlayers();
-                    DoubleBallDamage();
+                    BallManager.Instance.DoubleBallDamage();
                 }
                 break;
             case State.GameOver:
@@ -107,10 +100,6 @@ public class GameManager : MonoBehaviour {
         }
 
         HandlePause();
-    }
-
-    private void DoubleBallDamage() {
-        ballDamageIncreaseValue *= 2;
     }
 
     private void HandlePause() {
@@ -147,7 +136,7 @@ public class GameManager : MonoBehaviour {
             playerLost = rightPlayer;
         }
         
-        playerLost.TakeDamage(currentBall.GetBallDamage());
+        playerLost.TakeDamage(BallManager.Instance.GetCurrentBall().GetBallDamage());
         OnBallScored?.Invoke(this, EventArgs.Empty);
 
         if (IsGameOver()) {
@@ -160,23 +149,8 @@ public class GameManager : MonoBehaviour {
             return;
         }
 
-        CreateBall(playerLost.GetPlayerBallHoldPoint());
-        currentBall.StopMoving();
-    }
-
-    private void CreateBall(Transform spawnPoint) {
-        DestroyCurrentBall();
-        currentBall = Instantiate(ballPrefab, spawnPoint);
-        OnBallSpawned?.Invoke(currentBall);
-    }
-
-    private void DestroyCurrentBall() {
-        if (currentBall == null) return;
-        Destroy(currentBall.gameObject);
-    }
-
-    public Ball GetCurrentBall() {
-        return currentBall;
+        BallManager.Instance.CreateBall(playerLost.GetPlayerBallHoldPoint());
+        BallManager.Instance.GetCurrentBall().StopMoving();
     }
 
     private bool IsGameOver() {
@@ -211,11 +185,7 @@ public class GameManager : MonoBehaviour {
             gameTime = gameTimer
         });
     }
-
-    public float GetBallDamageIncreaseValue() {
-        return ballDamageIncreaseValue;
-    }
-
+    
     public void TogglePause() {
         OnGamePaused?.Invoke(this, EventArgs.Empty);
         
