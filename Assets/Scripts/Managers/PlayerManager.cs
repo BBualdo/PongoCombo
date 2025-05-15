@@ -69,7 +69,7 @@ public class PlayerManager : MonoBehaviour {
             playerLost = rightPlayer;
         }
         
-        playerLost.TakeDamage(BallManager.Instance.GetCurrentBall().GetBallDamage());
+        playerLost.TakeDamage(BallManager.Instance.GetCurrentBall().CurrentDamage);
         OnBallScored?.Invoke(this, new OnBallScoredEventArgs {
             scoredPlayer = playerScored,
             lostPlayer = playerLost

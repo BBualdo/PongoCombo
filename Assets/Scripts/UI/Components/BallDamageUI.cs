@@ -41,7 +41,7 @@ public class BallDamageUI : MonoBehaviour {
 
     private void UpdateVisual() {
         if (ball != null) {
-            damageValueText.text = ball.GetBallDamage().ToString();
+            damageValueText.text = ball.CurrentDamage.ToString();
         } else {
             damageValueText.text = "-";
         }
