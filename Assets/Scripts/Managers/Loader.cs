@@ -16,6 +16,8 @@ public class Loader : MonoBehaviour {
         public float progress;
     }
     
+    public event EventHandler OnLoadComplete;
+    
     private void Awake() {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
@@ -44,6 +46,11 @@ public class Loader : MonoBehaviour {
         });
         
         yield return new WaitForSeconds(1f);
+        
+        OnLoadComplete?.Invoke(this, EventArgs.Empty);
+
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+        
         loadOperation.allowSceneActivation = true;
     }
 }
