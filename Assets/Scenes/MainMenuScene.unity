@@ -246,7 +246,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2472223539988781850, guid: 31e4b0facba5ca5429e31f32ac7670b7, type: 3}
       propertyPath: m_text
-      value: "Powr\xF3t"
+      value: Back
       objectReference: {fileID: 0}
     - target: {fileID: 8654301142369986192, guid: 31e4b0facba5ca5429e31f32ac7670b7, type: 3}
       propertyPath: m_Name
@@ -575,7 +575,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2472223539988781850, guid: 31e4b0facba5ca5429e31f32ac7670b7, type: 3}
       propertyPath: m_text
-      value: Normalny
+      value: Normal
       objectReference: {fileID: 0}
     - target: {fileID: 3961310394046405774, guid: 31e4b0facba5ca5429e31f32ac7670b7, type: 3}
       propertyPath: m_Colors.m_PressedColor.b
@@ -1957,7 +1957,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2472223539988781850, guid: 31e4b0facba5ca5429e31f32ac7670b7, type: 3}
       propertyPath: m_text
-      value: Graj Solo
+      value: Play vs AI
       objectReference: {fileID: 0}
     - target: {fileID: 8654301142369986192, guid: 31e4b0facba5ca5429e31f32ac7670b7, type: 3}
       propertyPath: m_Name
@@ -3085,7 +3085,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2472223539988781850, guid: 31e4b0facba5ca5429e31f32ac7670b7, type: 3}
       propertyPath: m_text
-      value: "\u0141atwy"
+      value: Easy
       objectReference: {fileID: 0}
     - target: {fileID: 3961310394046405774, guid: 31e4b0facba5ca5429e31f32ac7670b7, type: 3}
       propertyPath: m_Colors.m_PressedColor.b
@@ -3762,7 +3762,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2472223539988781850, guid: 31e4b0facba5ca5429e31f32ac7670b7, type: 3}
       propertyPath: m_text
-      value: Trudny
+      value: Hard
       objectReference: {fileID: 0}
     - target: {fileID: 3961310394046405774, guid: 31e4b0facba5ca5429e31f32ac7670b7, type: 3}
       propertyPath: m_Colors.m_PressedColor.b
@@ -4435,7 +4435,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2472223539988781850, guid: 31e4b0facba5ca5429e31f32ac7670b7, type: 3}
       propertyPath: m_text
-      value: "Wyjd\u017A z gry"
+      value: Quit Game
       objectReference: {fileID: 0}
     - target: {fileID: 8654301142369986192, guid: 31e4b0facba5ca5429e31f32ac7670b7, type: 3}
       propertyPath: m_Name
@@ -4552,7 +4552,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2472223539988781850, guid: 31e4b0facba5ca5429e31f32ac7670b7, type: 3}
       propertyPath: m_text
-      value: Graj z Ziomem
+      value: Play Local PVP
       objectReference: {fileID: 0}
     - target: {fileID: 8654301142369986192, guid: 31e4b0facba5ca5429e31f32ac7670b7, type: 3}
       propertyPath: m_Name
@@ -5119,7 +5119,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Wybierz poziom trudno\u015Bci"
+  m_text: Select difficulty level
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

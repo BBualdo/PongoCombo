@@ -29,7 +29,7 @@ public class GameOverUI : MonoBehaviour {
 
     private void GameManager_OnGameOver(object sender, GameManager.OnGameOverEventArgs e) {
         Show();
-        playerWinnerText.text = $"{e.winner.PlayerName} wygrywa";
+        playerWinnerText.text = $"{e.winner.PlayerName} wins!";
     }
 
     private void Show() {
