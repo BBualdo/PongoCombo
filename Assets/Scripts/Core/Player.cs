@@ -12,6 +12,12 @@ public class Player : MonoBehaviour {
 
     public event EventHandler OnBallGrabbed;
     public event EventHandler OnBallServed;
+
+    public string PlayerName { get; private set; }
+    public float PlayerHeight { get; private set; } = 2.5f;
+    public PlayerManager.PlayerSide PlayerSide => playerSide;
+    public float MaxHealth => 100f;
+    public float HealthLeft { get; private set; }
     
     [Header("Player Components")]
     [SerializeField] private Transform playerVisual;
@@ -19,20 +25,14 @@ public class Player : MonoBehaviour {
     private BoxCollider2D playerCollider;
 
     [Header("Player Settings")] 
-    public string playerName;
     [SerializeField] private float moveSpeed = 12f;
     [SerializeField] private PlayerManager.PlayerSide playerSide;
-    private float playerHeight;
     
     [Header("AI")]
     [SerializeField] private bool isAIControlled;
     private float followSpeed;
     private float timeToServe = 0f;
     private float timeToServeMax = 2f;
-
-    [Header("Health")] 
-    [SerializeField] private float maxHealth = 100f;
-    private float healthLeft;
     
     [Header("ServeDirectionDraw")]
     private float yServeDirectionMax = 2f;
@@ -45,9 +45,9 @@ public class Player : MonoBehaviour {
     private void Awake() {
         playerCollider = GetComponent<BoxCollider2D>();
         SetPlayerHeight();
-        playerHeight = GetPlayerHeight();
-        healthLeft = maxHealth;
+        HealthLeft = MaxHealth;
         followSpeed = CalculateFollowSpeed();
+        PlayerName = PlayerSide == PlayerManager.PlayerSide.PlayerL ? "Player 1" : "Player 2";
     }
 
     private void Start() {
@@ -84,7 +84,7 @@ public class Player : MonoBehaviour {
     }
 
     private void UpdateYMoveBound() {
-        yMoveBound = (Field.Instance.GetFieldHeight() - playerHeight) / 2;
+        yMoveBound = (Field.Instance.GetFieldHeight() - PlayerHeight) / 2;
     }
 
     private void HandleMovement() {
@@ -99,30 +99,36 @@ public class Player : MonoBehaviour {
     }
 
     private void HandleServing() {
-        if (TryGetBall(out Ball ball)) {
-            OnBallGrabbed?.Invoke(this, EventArgs.Empty);
+        if (!TryGetBall(out Ball ball)) return; 
+        
+        OnBallGrabbed?.Invoke(this, EventArgs.Empty);    
             
-            if (!isAIControlled) {
-                // Start direction draw
-                Vector2 serveDirection = DrawServeDirection();
+        if (!isAIControlled) 
+            HandlePlayerServing(ball);
+        else
+            HandleAIServing(ball);
+    }
 
-                if (Input.GetKeyDown(KeyCode.Space)) {
-                    ball.PerformServe(serveDirection);
-                    OnBallServed?.Invoke(this, EventArgs.Empty);
-                }
-            } else {
-                timeToServe += Time.deltaTime;
-                Vector2 serveDirection = DrawServeDirection();
-                
-                if (timeToServe >= timeToServeMax) {
-                    timeToServe = 0f;
-                    ball.PerformServe(serveDirection);
-                    OnBallServed?.Invoke(this, EventArgs.Empty);
-                }
-            }
+    private void HandlePlayerServing(Ball ball) {
+        Vector2 serveDirection = DrawServeDirection();
+
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            ball.PerformServe(serveDirection);
+            OnBallServed?.Invoke(this, EventArgs.Empty);
         }
     }
 
+    private void HandleAIServing(Ball ball) {
+        timeToServe += Time.deltaTime;
+        Vector2 serveDirection = DrawServeDirection();
+            
+        if (timeToServe >= timeToServeMax) {
+            timeToServe = 0f;
+            ball.PerformServe(serveDirection);
+            OnBallServed?.Invoke(this, EventArgs.Empty);
+        }
+    }
+    
     private void HandleAIMovement() {
         Ball ball = BallManager.Instance.GetCurrentBall();
         float targetY;
@@ -144,7 +150,7 @@ public class Player : MonoBehaviour {
 
     public float GetHitOffsetNormalized(ContactPoint2D contact) {
         float offset = contact.point.y - transform.position.y;
-        return offset / (playerHeight / 2);
+        return offset / (PlayerHeight / 2);
     }
 
     public Transform GetPlayerBallHoldPoint() {
@@ -166,20 +172,12 @@ public class Player : MonoBehaviour {
     }
 
     public void TakeDamage(float damage) {
-        healthLeft -= damage;
+        HealthLeft -= damage;
         OnDamageTaken?.Invoke(this, EventArgs.Empty);
     }
 
     public float GetHealthPercent() {
-        return (healthLeft / maxHealth) * 100;
-    }
-
-    public float GetRemainingHealth() {
-        return healthLeft;
-    }
-
-    public float GetMaxHealth() {
-        return maxHealth;
+        return (HealthLeft / MaxHealth) * 100;
     }
 
     public bool IsDead() {
@@ -188,7 +186,7 @@ public class Player : MonoBehaviour {
 
     public void Reset() {
         transform.position = new Vector2(transform.position.x, 0);
-        healthLeft = maxHealth;
+        HealthLeft = MaxHealth;
     }
 
     private Vector2 DrawServeDirection() {
@@ -210,17 +208,9 @@ public class Player : MonoBehaviour {
         return serveDirection;
     }
 
-    public PlayerManager.PlayerSide GetPlayerSide() {
-        return playerSide;
-    }
-
-    public float GetPlayerHeight() {
-        return playerHeight;
-    }
-
     public void SetPlayerHeight(float newHeight = 2.5f) {
         playerVisual.localScale = new Vector3(playerVisual.localScale.x, newHeight, playerVisual.localScale.z);
-        playerHeight = playerVisual.localScale.y;
+        PlayerHeight = playerVisual.localScale.y;
 
         Vector2 colliderSize = playerCollider.size;
         playerCollider.size = new Vector2(colliderSize.x, newHeight);

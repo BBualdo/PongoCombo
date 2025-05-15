@@ -28,6 +28,6 @@ public class PlayerHealthBarUI : MonoBehaviour {
 
     private void UpdateVisual() {
         barImage.fillAmount = player.GetHealthPercent() / 100f;
-        healthText.text = $"{player.GetRemainingHealth()}/{player.GetMaxHealth()}";
+        healthText.text = $"{player.HealthLeft}/{player.MaxHealth}";
     }
 }

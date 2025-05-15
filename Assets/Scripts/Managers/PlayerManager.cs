@@ -46,13 +46,13 @@ public class PlayerManager : MonoBehaviour {
 
     public void ShrinkPlayers() {
         float minPlayerHeight = .5f;
-        if (leftPlayer.GetPlayerHeight() > minPlayerHeight) {
-            leftPlayer.SetPlayerHeight(leftPlayer.GetPlayerHeight() - .5f);
+        if (leftPlayer.PlayerHeight > minPlayerHeight) {
+            leftPlayer.SetPlayerHeight(leftPlayer.PlayerHeight - .5f);
             OnPlayersShrink?.Invoke(this, EventArgs.Empty);
         }
         
-        if (rightPlayer.GetPlayerHeight() > minPlayerHeight) {
-            rightPlayer.SetPlayerHeight(rightPlayer.GetPlayerHeight() - .5f);
+        if (rightPlayer.PlayerHeight > minPlayerHeight) {
+            rightPlayer.SetPlayerHeight(rightPlayer.PlayerHeight - .5f);
         }
     }
 
