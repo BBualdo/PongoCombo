@@ -23,19 +23,12 @@ public class GameManager : MonoBehaviour {
     public class OnCountdownChangedEventArgs {
         public float countdownTimer;
     }
-    public event EventHandler OnBallScored;
+    
     public event EventHandler<OnGameTimeUpdateEventArgs> OnGameTimeUpdate;
     public class OnGameTimeUpdateEventArgs {
         public float gameTime;
     }
     public event EventHandler OnGamePaused;
-    public event EventHandler OnPlayersShrink;
-    
-    [Header("Players")]
-    [SerializeField] private Player leftPlayer;
-    [SerializeField] private Player rightPlayer;
-    private Player playerScored;
-    private Player playerLost;
 
     [Header("GameSettings")] 
     private float countdownTimer = 3f;
@@ -62,11 +55,26 @@ public class GameManager : MonoBehaviour {
             SFXManager.Instance.RegisterGameplayEvents(this);    
         }
         
+        PlayerManager.Instance.OnBallScored += PlayerManager_OnBallScored;
+        
         state = State.GameCountdown;
 
         ResetGameTimer();
-        
-        GoalLine.OnGoalScored += GoalLine_OnGoalScored;
+    }
+
+    private void PlayerManager_OnBallScored(object sender, PlayerManager.OnBallScoredEventArgs e) {
+        if (e.lostPlayer.IsDead()) {
+            OnGameOver?.Invoke(this, new OnGameOverEventArgs {
+                winner = e.scoredPlayer
+            });
+
+            state = State.GameOver;
+
+            return;
+        }
+
+        BallManager.Instance.CreateBall(e.lostPlayer.GetPlayerBallHoldPoint());
+        BallManager.Instance.GetCurrentBall().StopMoving();
     }
 
     private void Update() {
@@ -91,7 +99,7 @@ public class GameManager : MonoBehaviour {
                 
                 if (gameTimer >= additionalEffectsTimerThreshhold * gamePhase) {
                     gamePhase++;
-                    ShrinkPlayers();
+                    PlayerManager.Instance.ShrinkPlayers();
                     BallManager.Instance.DoubleBallDamage();
                 }
                 break;
@@ -107,63 +115,17 @@ public class GameManager : MonoBehaviour {
             TogglePause();
         }
     }
-
-    private void ShrinkPlayers() {
-        float minPlayerHeight = .5f;
-        if (leftPlayer.GetPlayerHeight() > minPlayerHeight) {
-            leftPlayer.SetPlayerHeight(leftPlayer.GetPlayerHeight() - .5f);
-            OnPlayersShrink?.Invoke(this, EventArgs.Empty);
-        }
-        
-        if (rightPlayer.GetPlayerHeight() > minPlayerHeight) {
-            rightPlayer.SetPlayerHeight(rightPlayer.GetPlayerHeight() - .5f);
-        }
-    }
-
+    
     private void OnDestroy() {
-        GoalLine.OnGoalScored -= GoalLine_OnGoalScored;
+        PlayerManager.Instance.OnBallScored -= PlayerManager_OnBallScored;
         if (SFXManager.Instance != null) {
             SFXManager.Instance.UnregisterGameplayEvents(this);
         }
     }
 
-    private void GoalLine_OnGoalScored(object sender, GoalLine.OnGoalScoredEventArgs e) {
-        if (e.goalSide == GoalLine.GoalSide.Left) {
-            playerScored = rightPlayer;
-            playerLost = leftPlayer;
-        } else {
-            playerScored = leftPlayer;
-            playerLost = rightPlayer;
-        }
-        
-        playerLost.TakeDamage(BallManager.Instance.GetCurrentBall().GetBallDamage());
-        OnBallScored?.Invoke(this, EventArgs.Empty);
-
-        if (IsGameOver()) {
-            OnGameOver?.Invoke(this, new OnGameOverEventArgs {
-                winner = playerScored
-            });
-
-            state = State.GameOver;
-
-            return;
-        }
-
-        BallManager.Instance.CreateBall(playerLost.GetPlayerBallHoldPoint());
-        BallManager.Instance.GetCurrentBall().StopMoving();
-    }
-
-    private bool IsGameOver() {
-        if (playerLost != null) {
-            return playerLost.IsDead();
-        }
-
-        return false;
-    }
-
     public void RestartGame() {
-        leftPlayer.Reset();
-        rightPlayer.Reset();
+        PlayerManager.Instance.GetPlayer(PlayerManager.PlayerSide.PlayerL).Reset();
+        PlayerManager.Instance.GetPlayer(PlayerManager.PlayerSide.PlayerR).Reset();
         ResetGameTimer();
         
         OnGameReset?.Invoke(this, EventArgs.Empty);

@@ -4,10 +4,6 @@ using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
 public class Player : MonoBehaviour {
-    public enum PlayerSide {
-        PlayerL,
-        PlayerR
-    }
     public event EventHandler OnDamageTaken;
     public event EventHandler<OnServeDirectionChangedEventArgs> OnServeDirectionChanged;
     public class OnServeDirectionChangedEventArgs {
@@ -25,7 +21,7 @@ public class Player : MonoBehaviour {
     [Header("Player Settings")] 
     public string playerName;
     [SerializeField] private float moveSpeed = 12f;
-    [SerializeField] private PlayerSide playerSide;
+    [SerializeField] private PlayerManager.PlayerSide playerSide;
     private float playerHeight;
     
     [Header("AI")]
@@ -56,7 +52,7 @@ public class Player : MonoBehaviour {
 
     private void Start() {
         UpdateYMoveBound();
-        isAIControlled = playerSide == PlayerSide.PlayerR && GameManager.Instance.GetGameMode() == 1;
+        isAIControlled = playerSide == PlayerManager.PlayerSide.PlayerR && GameManager.Instance.GetGameMode() == 1;
     }
 
     private void Update() {
@@ -92,8 +88,8 @@ public class Player : MonoBehaviour {
     }
 
     private void HandleMovement() {
-        KeyCode up = playerSide == PlayerSide.PlayerL ? KeyCode.W : KeyCode.UpArrow;
-        KeyCode down = playerSide == PlayerSide.PlayerL ? KeyCode.S : KeyCode.DownArrow;
+        KeyCode up = playerSide == PlayerManager.PlayerSide.PlayerL ? KeyCode.W : KeyCode.UpArrow;
+        KeyCode down = playerSide == PlayerManager.PlayerSide.PlayerL ? KeyCode.S : KeyCode.DownArrow;
         
         if (Input.GetKey(up)) {
             transform.position += Vector3.up * (moveSpeed * Time.deltaTime);
@@ -197,7 +193,7 @@ public class Player : MonoBehaviour {
 
     private Vector2 DrawServeDirection() {
         // Player should serve to an opposite direction of his field position
-        float xServeDirection = playerSide == PlayerSide.PlayerL ? 1f : -1f;
+        float xServeDirection = playerSide == PlayerManager.PlayerSide.PlayerL ? 1f : -1f;
         float drawSpeed = 2f;
 
         yServeDirection += yServeDirectionStep * (drawSpeed * Time.deltaTime);
@@ -214,7 +210,7 @@ public class Player : MonoBehaviour {
         return serveDirection;
     }
 
-    public PlayerSide GetPlayerSide() {
+    public PlayerManager.PlayerSide GetPlayerSide() {
         return playerSide;
     }
 

@@ -20,15 +20,11 @@ public class SFXManager : MonoBehaviour
     }
 
     public void RegisterGameplayEvents(GameManager gameManager) {
-        gameManager.OnBallScored += GameManager_OnBallScored;
         gameManager.OnCountdownChanged += GameManager_OnCountdownChanged;
-        gameManager.OnPlayersShrink += GameManager_OnPlayersShrink;
     }
 
     public void UnregisterGameplayEvents(GameManager gameManager) {
-        gameManager.OnBallScored -= GameManager_OnBallScored;
         gameManager.OnCountdownChanged -= GameManager_OnCountdownChanged;
-        gameManager.OnPlayersShrink -= GameManager_OnPlayersShrink;
     }
 
     public void RegisterBallEvents(BallManager ballManager) {
@@ -43,6 +39,16 @@ public class SFXManager : MonoBehaviour
 
     public void UnregisterBallEvents(BallManager ballManager) {
         ballManager.OnBallSpawned -= BallManager_OnBallSpawned;
+    }
+
+    public void RegisterPlayerEvents(PlayerManager playerManager) {
+        playerManager.OnBallScored += GameManager_OnBallScored;
+        playerManager.OnPlayersShrink += GameManager_OnPlayersShrink;
+    }
+
+    public void UnregisterPlayerEvents(PlayerManager playerManager) {
+        playerManager.OnBallScored -= GameManager_OnBallScored;
+        playerManager.OnPlayersShrink -= GameManager_OnPlayersShrink;
     }
 
     private void GameManager_OnPlayersShrink(object sender, EventArgs e) {

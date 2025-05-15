@@ -32,7 +32,7 @@ public class BallServeArrowUI : MonoBehaviour {
         
         // Rotation
         float angle = Mathf.Atan2(dirNormalized.y, dirNormalized.x) * Mathf.Rad2Deg;
-        if (player.GetPlayerSide() == Player.PlayerSide.PlayerR) {
+        if (player.GetPlayerSide() == PlayerManager.PlayerSide.PlayerR) {
             angle += 180f;
         }
         arrowTransform.localRotation = Quaternion.Euler(0, 0, angle);
